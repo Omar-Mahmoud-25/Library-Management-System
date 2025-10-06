@@ -1,11 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using LibraryManagementSystem.Context;
+using LibraryManagementSystem.Services;
+using LibraryManagementSystem.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<LMSContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IBookService, BookService>();
 
 builder.Services.AddControllersWithViews();
 

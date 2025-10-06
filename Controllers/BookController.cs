@@ -1,34 +1,106 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 using LibraryManagementSystem.Models;
+using LibraryManagementSystem.Services;
 using LibraryManagementSystem.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace LibraryManagementSystem.Controllers;
 
 public class BookController : Controller
 {
-    private readonly ILogger<BookController> _logger;
     private readonly IBookService _bookService;
-
-    public BookController(ILogger<BookController> logger, IBookService bookService)
+    private readonly ICategoryService _CategoriesService;
+    public BookController(
+            IBookService bookService,
+            ICategoryService categoryService)
     {
-        _logger = logger;
         _bookService = bookService;
+        _CategoriesService = categoryService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var books = await _bookService.GetAll();
+        return View(books);
+    }
+    [HttpGet]
+    public IActionResult Create()
+    {
+        var viewModel = new CreateBookViewModel
+        {
+            Categories = _CategoriesService.GetSelectList()
+        };
+
+        return View(viewModel);
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(CreateBookViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            model.Categories = _CategoriesService.GetSelectList();
+            return View(model);
+        }
+
+        await _bookService.Create(model);
+
+        return RedirectToAction(nameof(Index));
+    }
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        var book = await _bookService.GetByIdAsync(id);
+        if (book == null)
+            return NotFound();
+
+        var viewModel = new CreateBookViewModel
+        {
+            Id = book.Id,
+            Title = book.Title,
+            Author = book.Author,
+            Description = book.Description,
+            PublishedDate = book.PublishedDate,
+            CopiesAvailable = book.CopiesAvailable,
+            CoverImageUrl = book.CoverImageUrl,
+            CategoryId = book.BookCategories.FirstOrDefault()?.CategoryId ?? 0, // ??? ????? ??????
+            Categories = _CategoriesService.GetSelectList()
+        };
+
+        return View(viewModel);
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(CreateBookViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            model.Categories = _CategoriesService.GetSelectList();
+            return View(model);
+        }
+
+        await _bookService.UpdateAsync(model);
+
+        return RedirectToAction(nameof(Index));
+    }
+    [HttpDelete]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var isDeleted = await _bookService.DeleteAsync(id);
+
+        return isDeleted ? Ok() : BadRequest();
+    }
+    public IActionResult Details(int id)
+    {
+        var book = _bookService.GetById(id); 
+
+        if (book is null)
+            return NotFound();
+
+        return View(book); 
     }
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
 }
