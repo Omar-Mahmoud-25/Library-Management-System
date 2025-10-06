@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using LibraryManagementSystem.Context;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using LibraryManagementSystem.Repositories.interfaces;
+using LibraryManagementSystem.Repositories;
+using LibraryManagementSystem.Services.interfaces;
 using LibraryManagementSystem.Services;
-using LibraryManagementSystem.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +16,20 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IBookService, BookService>();
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromHours(12);
+    });
+builder.Services.AddAuthorization();
+
+// Dependency Injection for Repositories and Services
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 
 var app = builder.Build();
 
@@ -27,6 +44,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
