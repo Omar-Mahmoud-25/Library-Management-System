@@ -5,6 +5,7 @@ using LibraryManagementSystem.Repositories.interfaces;
 using LibraryManagementSystem.Repositories;
 using LibraryManagementSystem.Services.interfaces;
 using LibraryManagementSystem.Services;
+using LibraryManagementSystem.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,38 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 
 var app = builder.Build();
+
+// Seed admin user
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<LMSContext>();
+    var accountService = scope.ServiceProvider.GetRequiredService<IAccountService>();
+    
+    // Ensure database is created
+    context.Database.EnsureCreated();
+    
+    // Check if admin exists
+    var adminEmail = "admin@library.com";
+    var existingAdmin = context.Users.FirstOrDefault(u => u.Email == adminEmail);
+    
+    if (existingAdmin == null)
+    {
+        var adminUser = new User
+        {
+            FirstName = "System",
+            LastName = "Administrator",
+            Email = adminEmail,
+            PhoneNumber = "1234567890",
+            IsAdmin = true,
+            IsActive = true,
+            JoiningDate = DateTime.Now
+        };
+        
+        // Use your service to hash password properly
+        await accountService.RegisterAsync(adminUser, "Admin123!");
+        Console.WriteLine("Admin user created successfully!");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

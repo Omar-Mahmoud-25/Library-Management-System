@@ -1,8 +1,117 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home - Library Management System";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Hero Section -->
+<div class="hero-section bg-primary text-white text-center py-5 mb-5">
+    <div class="container">
+        <h1 class="display-4 mb-3">Welcome to Our Library</h1>
+        <p class="lead mb-4">Discover, borrow, and manage your favorite books with ease</p>
+        @if (User.Identity?.IsAuthenticated != true)
+        {
+            <a asp-controller="Account" asp-action="Login" class="btn btn-light btn-lg me-3">Get Started</a>
+            <a asp-controller="Account" asp-action="Register" class="btn btn-outline-light btn-lg">Join Now</a>
+        }
+        else
+        {
+            <a asp-controller="Books" asp-action="Index" class="btn btn-light btn-lg">Browse Books</a>
+        }
+    </div>
 </div>
+
+<!-- Features Section -->
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-md-4 text-center mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-book fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Extensive Collection</h5>
+                    <p class="card-text">Browse through thousands of books across various genres and subjects.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-center mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-clock fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Easy Borrowing</h5>
+                    <p class="card-text">Simple and quick book borrowing process with flexible return periods.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-center mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-users fa-3x text-info mb-3"></i>
+                    <h5 class="card-title">Community</h5>
+                    <p class="card-text">Join our community of book lovers and share your reading experiences.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Section -->
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <div class="container mb-5">
+        <div class="row text-center">
+            <div class="col-md-3">
+                <h3 class="text-primary">5,000+</h3>
+                <p>Books Available</p>
+            </div>
+            <div class="col-md-3">
+                <h3 class="text-success">1,200+</h3>
+                <p>Active Members</p>
+            </div>
+            <div class="col-md-3">
+                <h3 class="text-info">850+</h3>
+                <p>Books Borrowed This Month</p>
+            </div>
+            <div class="col-md-3">
+                <h3 class="text-warning">15+</h3>
+                <p>Categories</p>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Quick Actions for Authenticated Users -->
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <div class="container mb-5">
+        <h3 class="text-center mb-4">Quick Actions</h3>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-6 mb-3">
+                                <a asp-controller="Books" asp-action="Index" class="btn btn-outline-primary btn-lg w-100">
+                                    <i class="fas fa-search me-2"></i>Browse Available Books
+                                </a>
+                            </div>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-outline-danger btn-lg w-100">
+                                        <i class="fas fa-cog me-2"></i>Admin Dashboard
+                                    </a>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <a asp-controller="Member" asp-action="MyBorrowings" class="btn btn-outline-success btn-lg w-100">
+                                        <i class="fas fa-bookmark me-2"></i>My Borrowed Books
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
