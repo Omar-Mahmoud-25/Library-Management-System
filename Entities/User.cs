@@ -20,6 +20,8 @@ public class User
     [Required, MaxLength(15)]
     public string PhoneNumber { get; set; }
 
+    public string PasswordHash { get; set; }
+
     [Required]
     public DateTime JoiningDate { get; set; } = DateTime.Now;
 
