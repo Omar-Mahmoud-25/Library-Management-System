@@ -44,7 +44,7 @@ namespace LibraryManagementSystem.Controllers
 				new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
 				new Claim(ClaimTypes.Name, user.FullName),
 				new Claim(ClaimTypes.Email, user.Email),
-				new Claim("role", user.IsAdmin? "Admin" : "User")
+				new Claim(ClaimTypes.Role, user.IsAdmin? "Admin" : "User")
 			};
 
 			var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -88,11 +88,12 @@ namespace LibraryManagementSystem.Controllers
 			var result = await _accountService.RegisterAsync(user, model.Password);
 			if (!result)
 			{
-				ModelState.AddModelError("", "this email already exists.");
+				ModelState.AddModelError("Email", "A user with this email address already exists.");
 				return View(model);
 			}
 
-			// Optionally log in the user after registration
+			// Show success message and redirect to login
+			TempData["SuccessMessage"] = "Registration successful! Please log in with your credentials.";
 			return RedirectToAction("Login");
 		}
 
