@@ -1,0 +1,97 @@
+﻿@using LibraryManagementSystem.Entities
+@model IEnumerable<User>
+
+@{
+    ViewData["Title"] = "User";
+}
+
+<style>
+    .top-links {
+        display: flex;
+        gap: 30px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        font-size: 20px;
+    }
+
+    .top-links a {
+        text-decoration: none;
+        color: #ccc;
+        position: relative;
+        font-weight: 500;
+        transition: 0.3s;
+    }
+
+    .top-links a:hover {
+        color: white;
+    }
+
+    .top-links a.active::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: #00ff88; 
+    }
+</style>
+
+<div class="top-links">
+    <a asp-controller="User" asp-action="Index" class="@(ViewData["Title"]?.ToString() == "Users" ? "active" : "")">Users</a>
+    <a asp-controller="Borrowing" asp-action="Index" class="@(ViewData["Title"]?.ToString() == "Borrowings" ? "active" : "")">Borrowings</a>
+    <a asp-controller="Book" asp-action="Index" class="@(ViewData["Title"]?.ToString() == "Books" ? "active" : "")">Books</a>
+</div>
+
+<a class="btn btn-secondary btn-lg" asp-action="Create">
+    <i class="bi bi-plus-circle-dotted"></i>
+    Add User
+</a>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning mt-5">
+        <h4 class="alert-heading">No users!</h4>
+        <p class="mb-0">No users were added yet.</p>
+    </div>
+}
+else
+{
+    <div class="mt-5">
+        <table class="table table-bordered border-primary">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Admin</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr class="border-1 border-success">
+                        <td>@user.FirstName @user.LastName</td>
+                        <td>@user.Email</td>
+                        <td>@(user.IsAdmin ? "Yes" : "No")</td>
+                        <td class="align-middle">
+                            <div class="d-flex justify-content-end">
+                                <a class="btn btn-info rounded-3 me-2" asp-action="Edit" asp-route-id="@user.Id">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </a>
+                                <a href="javascript:;" class="btn btn-danger rounded-3 js-delete" data-id="@user.Id">
+                                    <i class="bi bi-trash3"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@section Scripts
+{
+    <script src="~/js/users-index.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,74 @@
+﻿@model EditBookViewModel
+
+@{
+    ViewData["Title"] = "Edit Book";
+}
+
+<h3 class="mb-4">
+    <i class="bi bi-pencil-square"></i> Edit Book
+</h3>
+
+<form asp-action="Edit" asp-controller="Books" method="post" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" placeholder="Enter book title" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Author" class="form-label"></label>
+                <input asp-for="Author" class="form-control" placeholder="Enter author name" />
+                <span asp-validation-for="Author" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" placeholder="Enter book description"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="PublishedDate" class="form-label"></label>
+                <input asp-for="PublishedDate" class="form-control" type="date" />
+                <span asp-validation-for="PublishedDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="CopiesAvailable" class="form-label"></label>
+                <input asp-for="CopiesAvailable" class="form-control" type="number" min="0" />
+                <span asp-validation-for="CopiesAvailable" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="SelectedCategoryId" class="form-label"></label>
+                <select asp-for="SelectedCategoryId" asp-items="Model.Categories" class="form-select">
+                    <option value="">-- Select Category --</option>
+                </select>
+                <span asp-validation-for="SelectedCategoryId" class="text-danger"></span>
+            </div>
+
+          
+            <div class="form-group mb-3">
+                <label asp-for="CoverImageUrl" class="form-label"></label>
+                <input asp-for="CoverImageUrl" class="form-control" type="file" />
+                <small class="form-text text-muted">Upload a new cover image if you want to replace the current one.</small>
+                <span asp-validation-for="CoverImageUrl" class="text-danger d-block"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+            <a asp-action="Index" class="btn btn-secondary mt-3">Cancel</a>
+        </div>
+
+      
+        <div class="col-md-6 text-center">
+            <h5>Current Cover</h5>
+            <img src="~/images/books/@Model.CoverImageUrl" alt="Book Cover" class="img-thumbnail mt-3" style="max-height:300px;" />
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

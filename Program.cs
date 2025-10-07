@@ -11,6 +11,8 @@ builder.Services.AddDbContext<LMSContext>(options =>
 
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IBorrowingService, BorrowingService>();
 
 builder.Services.AddControllersWithViews();
 

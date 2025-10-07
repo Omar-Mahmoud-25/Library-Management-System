@@ -1,0 +1,42 @@
+﻿@using LibraryManagementSystem.Entities
+@model Book
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="card border-primary rounded-4 mt-5 overflow-hidden shadow">
+    <div class="card-body p-0">
+        <div class="row">
+            <div class="col-md-8 px-5 py-4 d-flex flex-column justify-content-between">
+                <div>
+                    <h1 class="text-primary fw-bolder">@Model.Title</h1>
+                    <span class="badge bg-info fs-5 mb-4">@Model.Category</span>
+                    <h4 class="text-secondary mb-3">By @Model.Author</h4>
+                    <p class="fs-5">@Model.Description</p>
+                </div>
+
+                <div class="mt-3">
+                    <p class="fs-6">
+                        <strong>Publication Year:</strong>@Model.PublishedDate.Year
+                    </p>
+                    <p class="fs-6">
+                        <strong>Available Copies:</strong>@Model.CopiesAvailable
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <img src="@($"/images/{Model.CoverImageUrl}")" alt="@Model.Title" class="w-100 h-100 object-fit-cover" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to List
+    </a>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info text-white ms-2">
+        <i class="bi bi-pencil-fill"></i> Edit
+    </a>
+</div>

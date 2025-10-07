@@ -52,11 +52,11 @@ public class BookController : Controller
     [HttpGet]
     public async Task<IActionResult> Edit(int id)
     {
-        var book = await _bookService.GetByIdAsync(id);
+        var book = _bookService.GetById( id);
+
         if (book == null)
             return NotFound();
-
-        var viewModel = new CreateBookViewModel
+        EditBookViewModel viewModel = new()
         {
             Id = book.Id,
             Title = book.Title,
@@ -65,15 +65,16 @@ public class BookController : Controller
             PublishedDate = book.PublishedDate,
             CopiesAvailable = book.CopiesAvailable,
             CoverImageUrl = book.CoverImageUrl,
-            CategoryId = book.BookCategories.FirstOrDefault()?.CategoryId ?? 0, // ??? ????? ??????
-            Categories = _CategoriesService.GetSelectList()
+            Categories = _CategoriesService.GetSelectList(),
+            SelectedCategoryId = book.BookCategories.FirstOrDefault()?.CategoryId ?? 0
         };
 
         return View(viewModel);
     }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(CreateBookViewModel model)
+    public async Task<IActionResult> Edit(EditBookViewModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -81,10 +82,14 @@ public class BookController : Controller
             return View(model);
         }
 
-        await _bookService.UpdateAsync(model);
+        var updatedBook = await _bookService.UpdateAsync(model);
+
+        if (updatedBook == null)
+            return BadRequest();
 
         return RedirectToAction(nameof(Index));
     }
+
     [HttpDelete]
     public async Task<IActionResult> Delete(int id)
     {

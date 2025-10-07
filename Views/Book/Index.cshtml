@@ -1,0 +1,100 @@
+﻿@using LibraryManagementSystem.Entities
+@model IEnumerable<Book>
+
+@{
+    ViewData["Title"] = "Book";
+}
+
+<style>
+    .top-links {
+        display: flex;
+        gap: 30px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        font-size: 20px;
+    }
+
+    .top-links a {
+        text-decoration: none;
+        color: #ccc;
+        position: relative;
+        font-weight: 500;
+        transition: 0.3s;
+    }
+
+    .top-links a:hover {
+        color: white;
+    }
+
+    .top-links a.active::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: #00ff88; 
+    }
+</style>
+
+<div class="top-links">
+    <a asp-controller="User" asp-action="Index" class="@(ViewData["Title"]?.ToString() == "Users" ? "active" : "")">Users</a>
+    <a asp-controller="Borrowing" asp-action="Index" class="@(ViewData["Title"]?.ToString() == "Borrowings" ? "active" : "")">Borrowings</a>
+    <a asp-controller="Book" asp-action="Index" class="@(ViewData["Title"]?.ToString() == "Books" ? "active" : "")">Books</a>
+</div>
+
+
+<a class="btn btn-secondary btn-lg" asp-action="Create">
+    <i class="bi bi-plus-circle-dotted"></i>
+    Add Book
+</a>
+
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning mt-5">
+        <h4 class="alert-heading">No books!</h4>
+        <p class="mb-0">No books were added yet.</p>
+    </div>
+}
+else
+{
+    <div class="mt-5">
+        <table class="table table-bordered border-primary">
+            <tbody>
+                @foreach (var book in Model)
+                {
+                    <tr class="border-1 border-success">
+                        <td>
+                            <div class="d-flex">
+                                <div class="pe-4">
+                                    <img src="@($"/images/{book.CoverImageUrl}")" alt="@book.Title" style="max-width: 90px" />
+                                </div>
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h4 class="text-light">@book.Title</h4>
+                                    <h5>@book.Author</h5>
+                                    <h6>@book.Category</h6>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="align-middle">
+                            <div class="d-flex justify-content-end">
+                                <a class="btn btn-info rounded-3 me-2" asp-action="Edit" asp-route-id="@book.Id">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </a>
+                                <a href="javascript:;" class="btn btn-danger rounded-3 js-delete" data-id="@book.Id">
+                                    <i class="bi bi-trash3"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@section Scripts
+{
+    <script src="~/js/books-index.js" asp-append-version="true"></script>
+}

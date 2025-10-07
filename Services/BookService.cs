@@ -1,7 +1,6 @@
 using LibraryManagementSystem.Context;
 using LibraryManagementSystem.Entities;
 using LibraryManagementSystem.Models;
-using LibraryManagementSystem.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 public class BookService : IBookService
@@ -49,37 +48,71 @@ public class BookService : IBookService
         _context.Books.Add(book);
         await _context.SaveChangesAsync();
     }
-    public async Task<EditBookViewModel> GetByIdForEditAsync(int id)
+    public async Task<Book?> UpdateAsync(EditBookViewModel model)
     {
-        var book = await _context.Books.FindAsync(id);
-        if (book == null) throw new Exception("Book not found");
+        var book = await _context.Books
+            .Include(b => b.BookCategories)
+            .FirstOrDefaultAsync(b => b.Id == model.Id);
 
-        return new EditBookViewModel
-        {
-            Id = book.Id,
-            Title = book.Title,
-            Author = book.Author,
-            CategoryId = book.CategoryId,
-            Categories = _CategoryService.GetSelectList()
-        };
-    }
-    public async Task UpdateAsync(EditBookViewModel model)
-    {
-        var book = await _context.Books.FindAsync(model.Id);
-        if (book == null) throw new Exception("Book not found");
+        if (book == null)
+            return null;
 
+        var hasNewCover = !string.IsNullOrEmpty(model.CoverImageUrl);
+        var oldCover = book.CoverImageUrl;
+
+        
         book.Title = model.Title;
         book.Author = model.Author;
+        book.Description = model.Description;
+        book.PublishedDate = model.PublishedDate;
+        book.CopiesAvailable = model.CopiesAvailable;
+
+        
         book.BookCategories.Clear();
-        book.BookCategories.Add(new BookCategory
+        book.BookCategories.Add(new BookCategory { CategoryId = model.SelectedCategoryId });
+
+        
+        if (hasNewCover)
         {
-            BookId = book.Id,
-            CategoryId = model.CategoryId
-        });
+            book.CoverImageUrl = await SaveCoverAsync(model.CoverImageUrl);
+        }
 
+        var effectedRows = await _context.SaveChangesAsync();
 
-        await _context.SaveChangesAsync();
+        
+        if (effectedRows > 0)
+        {
+            if (hasNewCover && oldCover != null)
+            {
+                var coverPath = Path.Combine(_imagesPath, oldCover);
+                if (File.Exists(coverPath))
+                    File.Delete(coverPath);
+            }
+
+            return book;
+        }
+        else
+        {
+            
+            if (hasNewCover)
+            {
+                var coverPath = Path.Combine(_imagesPath, book.CoverImageUrl);
+                if (File.Exists(coverPath))
+                    File.Delete(coverPath);
+            }
+
+            return null;
+        }
     }
+
+    
+    private async Task<string> SaveCoverAsync(string coverUrl)
+    {
+        
+        return coverUrl;
+    }
+
+
     public async Task<bool> DeleteAsync(int id)
     {
         var book = await _context.Books.FindAsync(id);

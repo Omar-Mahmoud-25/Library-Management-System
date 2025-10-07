@@ -1,0 +1,21 @@
+﻿@model LibraryManagementSystem.Entities.User
+
+@{
+    ViewData["Title"] = "Toggle Admin";
+}
+
+<h2>Toggle Admin</h2>
+
+<p>
+    Current status for <strong>@Model.FirstName @Model.LastName</strong>:
+    <strong>@(Model.IsAdmin ? "Admin" : "User")</strong>
+</p>
+
+
+<form asp-action="ToggleAdmin" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-warning">
+        Toggle Admin
+    </button>
+    <a asp-action="Index" class="btn btn-secondary">Back to Users</a>
+</form>
