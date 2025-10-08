@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using LibraryManagementSystem.Entities;
 using LibraryManagementSystem.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 public class UserController : Controller
 {
@@ -11,12 +12,14 @@ public class UserController : Controller
         _userService = userService;
     }
 
+    [Authorize(Roles = "Admin")]
     public IActionResult Index()
     {
         var users = _userService.GetAllUsers();
         return View(users);
     }
     [HttpPost]
+    [Authorize]
     public IActionResult Delete(int id)
     {
         var isDeleted = _userService.DeleteUser(id);

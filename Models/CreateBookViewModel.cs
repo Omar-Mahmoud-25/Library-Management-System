@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.FileProviders;
 using System.ComponentModel.DataAnnotations;
 
 namespace LibraryManagementSystem.Models
@@ -20,8 +21,8 @@ namespace LibraryManagementSystem.Models
         [Required]
         public int CopiesAvailable { get; set; } = 1;
 
-        [Required, Url]
-        public string CoverImageUrl { get; set; }
+        // [Required, Url]
+        // public IFileInfo CoverImageUrl { get; set; }
 
         [Required]
         [Display(Name = "Category")]

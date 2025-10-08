@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using LibraryManagementSystem.Entities;
 using LibraryManagementSystem.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 public class BorrowingController : Controller
 {
@@ -11,6 +12,7 @@ public class BorrowingController : Controller
         _borrowingService = borrowingService;
     }
 
+    [Authorize(Roles = "Admin")]
     public IActionResult Index()
     {
         var borrowings = _borrowingService.GetAllBorrowings();

@@ -1,6 +1,7 @@
 using LibraryManagementSystem.Models;
 using LibraryManagementSystem.Services;
 using LibraryManagementSystem.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +38,7 @@ public class BookController : Controller
         return View(viewModel);
     }
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create(CreateBookViewModel model)
     {
         if (!ModelState.IsValid)
@@ -51,9 +52,10 @@ public class BookController : Controller
         return RedirectToAction(nameof(Index));
     }
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int id)
     {
-        var book = _bookService.GetById( id);
+        var book = _bookService.GetById(id);
 
         if (book == null)
             return NotFound();
@@ -74,7 +76,7 @@ public class BookController : Controller
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(EditBookViewModel model)
     {
         if (!ModelState.IsValid)
@@ -92,6 +94,7 @@ public class BookController : Controller
     }
 
     [HttpDelete]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var isDeleted = await _bookService.DeleteAsync(id);

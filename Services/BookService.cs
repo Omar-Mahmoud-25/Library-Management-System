@@ -38,7 +38,8 @@ public class BookService : IBookService
             Description = model.Description,
             PublishedDate = model.PublishedDate,
             CopiesAvailable = model.CopiesAvailable,
-            CoverImageUrl = model.CoverImageUrl
+            Category = "some category",
+            CoverImageUrl = "some path"
         };
 
         book.BookCategories.Add(new BookCategory
@@ -46,6 +47,10 @@ public class BookService : IBookService
             CategoryId = model.CategoryId
         });
 
+        // var coverPath = Path.Combine(_imagesPath, Path.GetFileName(model.CoverImageUrl));
+        // if (File.Exists(coverPath))
+        //     File.Delete(coverPath);
+        // book.CoverImageUrl = await SaveCoverAsync(model.CoverImageUrl.PhysicalPath);
         _context.Books.Add(book);
         await _context.SaveChangesAsync();
     }

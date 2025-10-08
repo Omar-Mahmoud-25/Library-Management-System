@@ -30,7 +30,7 @@
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Books" asp-action="Index">
+                                <a class="nav-link" asp-controller="Book" asp-action="Index">
                                     <i class="fas fa-book me-1"></i>Available Books
                                 </a>
                             </li>
@@ -48,7 +48,7 @@
                                         <li><a class="dropdown-item" asp-controller="User">
                                             <i class="fas fa-users me-2"></i>Users List
                                         </a></li>
-                                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="AllBorrowings">
+                                        <li><a class="dropdown-item" asp-controller="Borrowing" asp-action="Index">
                                             <i class="fas fa-list me-2"></i>All Borrowings
                                         </a></li>
                                     </ul>
