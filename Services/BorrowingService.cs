@@ -23,16 +23,17 @@ public class BorrowingService : IBorrowingService
     }
     public int GetBorrowedCount()
     {
-        return _context.Borrowings.Count(b => !b.IsReturned);
+        return _context.Borrowings.Count(b => b.ReturnedDate == null);
     }
 
     public int GetOverdueCount()
     {
-        return _context.Borrowings.Count(b => b.IsOverdue);
+        return _context.Borrowings.Count(b => b.ReturnedDate == null && DateTime.Now > b.DueDate);
     }
 
     public int GetReturnedCount()
     {
-        return _context.Borrowings.Count(b => b.IsReturned);
+        return _context.Borrowings.Count(b => b.ReturnedDate != null);
     }
+
 }
