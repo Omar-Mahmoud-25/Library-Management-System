@@ -49,7 +49,7 @@ using (var scope = app.Services.CreateScope())
     context.Database.EnsureCreated();
     
     // Check if admin exists
-    var adminEmail = "admin@library.com";
+    var adminEmail = "admin@librarii.com";
     var existingAdmin = context.Users.FirstOrDefault(u => u.Email == adminEmail);
     
     if (existingAdmin == null)
