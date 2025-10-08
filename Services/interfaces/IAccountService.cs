@@ -1,12 +1,12 @@
 using LibraryManagementSystem.Entities;
 using System.Threading.Tasks;
 
-namespace LibraryManagementSystem.Services.interfaces
+namespace LibraryManagementSystem.Services.Interfaces;
+
+public interface IAccountService
 {
-	public interface IAccountService
-	{
-		Task<User?> AuthenticateAsync(string email, string password);
-		Task<bool> RegisterAsync(User user, string password);
-		Task<User?> GetByIdAsync(int id);
-	}
+	Task<User?> AuthenticateAsync(string email, string password);
+	Task<bool> RegisterAsync(User user, string password);
+	Task<User?> GetByIdAsync(int id);
 }
+

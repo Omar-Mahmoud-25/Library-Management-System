@@ -3,6 +3,7 @@ using LibraryManagementSystem.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using LibraryManagementSystem.Services.Interfaces;
 
 public class UserService : IUserService
 {
