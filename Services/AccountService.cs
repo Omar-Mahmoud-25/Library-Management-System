@@ -1,6 +1,6 @@
 using LibraryManagementSystem.Entities;
-using LibraryManagementSystem.Repositories.interfaces;
-using LibraryManagementSystem.Services.interfaces;
+using LibraryManagementSystem.Repositories.Interfaces;
+using LibraryManagementSystem.Services.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
