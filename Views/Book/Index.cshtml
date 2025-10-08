@@ -4,6 +4,9 @@
 @{
     ViewData["Title"] = "Books";
     var isAdmin = ViewBag.IsAdmin as bool? ?? false;
+    var categories = ViewBag.Categories as List<SelectListItem> ?? new List<SelectListItem>();
+    var selectedCategoryId = ViewBag.SelectedCategoryId as int?;
+    var searchTerm = ViewBag.SearchTerm as string ?? "";
 }
 
 <style>
@@ -36,6 +39,19 @@
         height: 2px;
         background-color: #00ff88;
     }
+
+    .category-badge {
+        font-size: 0.75rem;
+        margin-right: 0.25rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .filter-section {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
 </style>
 
 <div class="top-links">
@@ -45,6 +61,53 @@
     }
     <a asp-controller="Borrowing" asp-action="Index" class="@(ViewData["Title"]?.ToString() == "Borrowings" ? "active" : "")">Borrowings</a>
     <a asp-controller="Book" asp-action="Index" class="@(ViewData["Title"]?.ToString() == "Books" ? "active" : "")">Books</a>
+</div>
+
+<!-- Filter and Search Section -->
+<div class="filter-section">
+    <form method="get" class="row g-3">
+        <div class="col-md-4">
+            <label for="categorySelect" class="form-label text-light">Filter by Category</label>
+            <select name="categoryId" id="categorySelect" class="form-select">
+                <option value="">All Categories</option>
+                @foreach (var category in categories)
+                {
+                    <option value="@category.Value" selected="@(category.Value == selectedCategoryId?.ToString())">
+                        @category.Text
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="searchInput" class="form-label text-light">Search Books</label>
+            <input name="search" id="searchInput" type="text" class="form-control" 
+                   placeholder="Search by title, author..." value="@searchTerm" />
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search"></i> Filter
+            </button>
+        </div>
+    </form>
+    
+    @if (selectedCategoryId.HasValue || !string.IsNullOrEmpty(searchTerm))
+    {
+        <div class="mt-3">
+            <a asp-action="Index" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-x-circle"></i> Clear Filters
+            </a>
+            <span class="text-light ms-2">
+                @if (selectedCategoryId.HasValue)
+                {
+                    <span>Category: <strong>@(categories.FirstOrDefault(c => c.Value == selectedCategoryId.ToString())?.Text)</strong></span>
+                }
+                @if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    <span class="ms-2">Search: <strong>"@searchTerm"</strong></span>
+                }
+            </span>
+        </div>
+    }
 </div>
 
 @if (isAdmin)
@@ -58,13 +121,24 @@
 @if (!Model.Any())
 {
     <div class="alert alert-warning mt-5">
-        <h4 class="alert-heading">No books!</h4>
-        <p class="mb-0">No books were added yet.</p>
+        <h4 class="alert-heading">No books found!</h4>
+        @if (selectedCategoryId.HasValue || !string.IsNullOrEmpty(searchTerm))
+        {
+            <p class="mb-0">No books match your current filters. Try adjusting your search criteria.</p>
+        }
+        else
+        {
+            <p class="mb-0">No books were added yet.</p>
+        }
     </div>
 }
 else
 {
-    <div class="mt-5">
+    <div class="mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="text-light mb-0">Found @Model.Count() book(s)</h5>
+        </div>
+        
         <table class="table table-bordered border-primary">
             <tbody>
                 @foreach (var book in Model)
@@ -73,28 +147,54 @@ else
                         <td>
                             <div class="d-flex">
                                 <div class="pe-4">
-                                    <img src="@($"/images/{book.CoverImageUrl}")" alt="@book.Title" style="max-width: 90px" />
+                                    <img src="@($"/images/books/{book.CoverImageUrl}")" alt="@book.Title" 
+                                         style="max-width: 90px; height: 120px; object-fit: cover; border-radius: 8px;" />
                                 </div>
                                 <div class="d-flex flex-column justify-content-center">
-                                    <h4 class="text-light">@book.Title</h4>
-                                    <h5>@book.Author</h5>
-                                    <h6>@book.Category</h6>
+                                    <h4 class="text-light mb-2">@book.Title</h4>
+                                    <h5 class="text-secondary mb-2">by @book.Author</h5>
+                                    
+                                    <!-- Categories Display -->
+                                    @if (book.BookCategories?.Any() == true)
+                                    {
+                                        <div class="mb-2">
+                                            @foreach (var bookCategory in book.BookCategories)
+                                            {
+                                                <span class="badge bg-info category-badge">@bookCategory.Category?.Name</span>
+                                            }
+                                        </div>
+                                    }
+                                    
+                                    <!-- Book Info -->
+                                    <div class="text-muted">
+                                        <small>
+                                            <i class="bi bi-calendar"></i> @book.PublishedDate.Year
+                                            <span class="ms-3"><i class="bi bi-stack"></i> @book.CopiesAvailable copies</span>
+                                        </small>
+                                    </div>
+                                    
+                                    @if (!string.IsNullOrEmpty(book.Description))
+                                    {
+                                        <p class="text-light mt-2 mb-0" style="font-size: 0.9rem;">
+                                            @(book.Description.Length > 150 ? book.Description.Substring(0, 150) + "..." : book.Description)
+                                        </p>
+                                    }
                                 </div>
                             </div>
                         </td>
-                        <td class="align-middle">
+                        <td class="align-middle" style="width: 180px;">
                             <div class="d-flex justify-content-end">
-                                <a class="btn btn-primary rounded-3 me-2" asp-action="Details" asp-route-id="@book.Id">
+                                <a class="btn btn-primary rounded-3 me-2" asp-action="Details" asp-route-id="@book.Id" title="View Details">
                                     <i class="bi bi-eye"></i>
                                 </a>
                                 @if (isAdmin)
                                 {
-                                    <a class="btn btn-info rounded-3 me-2" asp-action="Edit" asp-route-id="@book.Id">
+                                    <a class="btn btn-info rounded-3 me-2" asp-action="Edit" asp-route-id="@book.Id" title="Edit Book">
                                         <i class="bi bi-pencil-fill"></i>
                                     </a>
-                                    <a href="javascript:;" class="btn btn-danger rounded-3 js-delete" data-id="@book.Id">
+                                    <button type="button" class="btn btn-danger rounded-3 js-delete" data-id="@book.Id" title="Delete Book">
                                         <i class="bi bi-trash3"></i>
-                                    </a>
+                                    </button>
                                 }
                             </div>
                         </td>
