@@ -1,0 +1,113 @@
+@model LibraryManagementSystem.Models.CategoryViewModel
+
+@{
+    ViewData["Title"] = "Category Details";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-info-circle"></i> Category Details
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">
+                            <i class="fas fa-tag"></i> @Html.DisplayNameFor(model => model.Name)
+                        </dt>
+                        <dd class="col-sm-8">
+                            <strong>@Html.DisplayFor(model => model.Name)</strong>
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            <i class="fas fa-align-left"></i> @Html.DisplayNameFor(model => model.Description)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @if (!string.IsNullOrEmpty(Model.Description))
+                            {
+                                @Html.DisplayFor(model => model.Description)
+                            }
+                            else
+                            {
+                                <span class="text-muted">No description provided</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            <i class="fas fa-books"></i> @Html.DisplayNameFor(model => model.BooksCount)
+                        </dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-info fs-6">@Html.DisplayFor(model => model.BooksCount)</span>
+                            @if (Model.BooksCount > 0)
+                            {
+                                <small class="text-muted ms-2">books associated with this category</small>
+                            }
+                            else
+                            {
+                                <small class="text-muted ms-2">no books associated yet</small>
+                            }
+                        </dd>
+                    </dl>
+
+                    @if (Model.BooksCount > 0)
+                    {
+                        <div class="alert alert-info d-flex align-items-center" role="alert">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <div>
+                                This category is associated with <strong>@Model.BooksCount</strong> book(s). 
+                                Deleting this category may affect those books.
+                            </div>
+                        </div>
+                    }
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a asp-action="Index" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left"></i> Back to List
+                        </a>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-md-2">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <form asp-action="Delete" asp-route-id="@Model.Id" method="post" style="display: inline;"
+                                  onsubmit="return confirm('Are you sure you want to delete @Model.Name? This action cannot be undone.')">
+                                <input name="_method" type="hidden" value="DELETE" />
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            @* Optional: Show books in this category *@
+            @if (Model.BooksCount > 0)
+            {
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-books"></i> Books in this Category
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">
+                            <i class="fas fa-construction"></i> 
+                            Books listing will be available once the Book management is implemented.
+                        </p>
+                        <a href="#" class="btn btn-outline-primary disabled">
+                            <i class="fas fa-list"></i> View Books
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Scripts section kept for potential future use -->
+}

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using LibraryManagementSystem.Entities;
+using LibraryManagementSystem.Services.Interfaces;
 
 public class UserController : Controller
 {

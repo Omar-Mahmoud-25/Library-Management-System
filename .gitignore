@@ -37,3 +37,4 @@
 *.jar
 *.war
 .vs/
+.fake

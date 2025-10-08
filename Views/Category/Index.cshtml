@@ -1,0 +1,133 @@
+@model List<LibraryManagementSystem.Models.CategoryViewModel>
+
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-tags"></i> Categories Management</h2>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add New Category
+                    </a>
+                }
+            </div>
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle"></i> @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (Model.Any())
+            {
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list"></i> All Categories (@Model.Count)
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th class="text-center">Books Count</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var category in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@category.Name</strong>
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(category.Description))
+                                                {
+                                                    <span>@category.Description</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">No description</span>
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge bg-info">@category.BooksCount</span>
+                                            </td>
+                                            <td class="text-center">
+                                                @if (User.IsInRole("Admin"))
+                                                {
+                                                    <div class="btn-group" role="group">
+                                                        <a asp-action="Details" asp-route-id="@category.Id" 
+                                                           class="btn btn-outline-info btn-sm" title="View Details">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                        <a asp-action="Edit" asp-route-id="@category.Id" 
+                                                           class="btn btn-outline-warning btn-sm" title="Edit">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        <form asp-action="Delete" asp-route-id="@category.Id" method="post" style="display: inline;"
+                                                              onsubmit="return confirm('Are you sure you want to delete @category.Name? This action cannot be undone.')">
+                                                            <input name="_method" type="hidden" value="DELETE" />
+                                                            <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <a asp-action="Details" asp-route-id="@category.Id" 
+                                                       class="btn btn-outline-info btn-sm" title="View Details">
+                                                        <i class="fas fa-eye"></i> Details
+                                                    </a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-tags fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Categories Found</h4>
+                    <p class="text-muted">Start by creating your first category.</p>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Create" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Create First Category
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Add anti-forgery token for AJAX calls -->
+    @Html.AntiForgeryToken()
+}

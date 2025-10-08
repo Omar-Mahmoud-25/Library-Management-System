@@ -27,11 +27,11 @@ public class BookController : Controller
         return View(books);
     }
     [HttpGet]
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
         var viewModel = new CreateBookViewModel
         {
-            Categories = _CategoriesService.GetSelectList()
+            Categories = await _CategoriesService.GetSelectList()
         };
 
         return View(viewModel);
@@ -42,7 +42,7 @@ public class BookController : Controller
     {
         if (!ModelState.IsValid)
         {
-            model.Categories = _CategoriesService.GetSelectList();
+            model.Categories = await _CategoriesService.GetSelectList();
             return View(model);
         }
 
@@ -66,7 +66,7 @@ public class BookController : Controller
             PublishedDate = book.PublishedDate,
             CopiesAvailable = book.CopiesAvailable,
             CoverImageUrl = book.CoverImageUrl,
-            Categories = _CategoriesService.GetSelectList(),
+            Categories = await _CategoriesService.GetSelectList(),
             SelectedCategoryId = book.BookCategories.FirstOrDefault()?.CategoryId ?? 0
         };
 
@@ -79,7 +79,7 @@ public class BookController : Controller
     {
         if (!ModelState.IsValid)
         {
-            model.Categories = _CategoriesService.GetSelectList();
+            model.Categories = await _CategoriesService.GetSelectList();
             return View(model);
         }
 

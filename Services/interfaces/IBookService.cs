@@ -1,6 +1,8 @@
 using LibraryManagementSystem.Entities;
 using LibraryManagementSystem.Models;
 
+namespace LibraryManagementSystem.Services.Interfaces;
+
 public interface IBookService
 {
     Task<List<Book>> GetAll();

@@ -2,6 +2,7 @@ using LibraryManagementSystem.Context;
 using LibraryManagementSystem.Entities;
 using LibraryManagementSystem.Models;
 using Microsoft.EntityFrameworkCore;
+using LibraryManagementSystem.Services.Interfaces;
 
 public class BookService : IBookService
 {
