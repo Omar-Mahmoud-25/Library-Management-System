@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using LibraryManagementSystem.Context;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using LibraryManagementSystem.Repositories.interfaces;
+using LibraryManagementSystem.Repositories.Interfaces;
 using LibraryManagementSystem.Repositories;
 using LibraryManagementSystem.Services.Interfaces;
 using LibraryManagementSystem.Services;
@@ -17,6 +17,9 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IBorrowingService, BorrowingService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IBookRepository, BookRepository>();
 
 builder.Services.AddControllersWithViews();
 

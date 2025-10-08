@@ -1,27 +1,88 @@
-﻿using LibraryManagementSystem.Context;
+﻿using LibraryManagementSystem.Entities;
+using LibraryManagementSystem.Repositories.Interfaces;
 using LibraryManagementSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace LibraryManagementSystem.Services;
+
 public class CategoryService : ICategoryService
 {
-    private readonly LMSContext _context;
+    private readonly ICategoryRepository _categoryRepository;
 
-    public CategoryService(LMSContext context)
+    public CategoryService(ICategoryRepository categoryRepository)
     {
-        _context = context;
+        _categoryRepository = categoryRepository;
     }
 
-    public List<SelectListItem> GetSelectList()
+    public async Task<bool> AddCategoryAsync(Category category)
     {
-        return _context.Categories
+        try
+        {
+            if (await _categoryRepository.CategoryExistsAsync(category.Name))
+                return false; // Category with this name already exists
+
+            await _categoryRepository.AddCategoryAsync(category);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public async Task<bool> DeleteCategoryAsync(int id)
+    {
+        try
+        {
+            await _categoryRepository.DeleteCategoryAsync(id);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public async Task<IEnumerable<Category>> GetAllCategoriesAsync()
+    {
+        return await _categoryRepository.GetAllCategoriesAsync();
+    }
+
+    public async Task<Category?> GetCategoryByIdAsync(int id)
+    {
+        return await _categoryRepository.GetCategoryByIdAsync(id);
+    }
+
+    public async Task<List<SelectListItem>> GetSelectList()
+    {
+        var categories = await GetAllCategoriesAsync();
+        return categories
             .Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name })
             .OrderBy(c => c.Text)
-            .AsNoTracking()
             .ToList();
+    }
+
+    public async Task<bool> UpdateCategoryAsync(Category category)
+    {
+        try
+        {
+            // Check if category exists
+            var existingCategory = await _categoryRepository.GetCategoryByIdAsync(category.Id);
+            if (existingCategory == null)
+            {
+                return false;
+            }
+
+            if (await _categoryRepository.CategoryExistsAsync(category.Name))
+                return false;
+
+            await _categoryRepository.UpdateCategoryAsync(category);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }
 

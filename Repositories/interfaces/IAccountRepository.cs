@@ -1,7 +1,7 @@
 using LibraryManagementSystem.Entities;
 using System.Threading.Tasks;
 
-namespace LibraryManagementSystem.Repositories.interfaces
+namespace LibraryManagementSystem.Repositories.Interfaces
 {
 	public interface IAccountRepository
 	{

@@ -1,5 +1,5 @@
 using LibraryManagementSystem.Entities;
-using LibraryManagementSystem.Services.interfaces;
+using LibraryManagementSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;

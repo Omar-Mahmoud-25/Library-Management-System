@@ -1,5 +1,5 @@
 using LibraryManagementSystem.Entities;
-using LibraryManagementSystem.Repositories.interfaces;
+using LibraryManagementSystem.Repositories.Interfaces;
 using LibraryManagementSystem.Services.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
