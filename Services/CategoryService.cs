@@ -72,11 +72,9 @@ public class CategoryService : ICategoryService
             {
                 return false;
             }
-
-            if (await _categoryRepository.CategoryExistsAsync(category.Name))
-                return false;
-
-            await _categoryRepository.UpdateCategoryAsync(category);
+            existingCategory.Name = category.Name;
+            existingCategory.Description = category.Description;
+            await _categoryRepository.UpdateCategoryAsync(existingCategory);
             return true;
         }
         catch

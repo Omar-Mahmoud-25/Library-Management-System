@@ -140,7 +140,7 @@ public class CategoryController : Controller
     }
 
     // DELETE: Category/Delete/5
-    [HttpDelete]
+    [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)

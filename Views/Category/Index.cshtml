@@ -84,12 +84,13 @@
                                                            class="btn btn-outline-warning btn-sm" title="Edit">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
-                                                        <button type="button" class="btn btn-outline-danger btn-sm"
-                                                                onclick="Confirm('Are you sure you want to delete this category? This action cannot be undone.')" 
-                                                                asp-controller="Category" asp-action="Delete" asp-route-id="@category.Id"
-                                                                title="Delete">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
+                                                        <form asp-action="Delete" asp-route-id="@category.Id" method="post" style="display: inline;"
+                                                              onsubmit="return confirm('Are you sure you want to delete @category.Name? This action cannot be undone.')">
+                                                            <input name="_method" type="hidden" value="DELETE" />
+                                                            <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
                                                     </div>
                                                 }
                                                 else
@@ -127,33 +128,6 @@
 </div>
 
 @section Scripts {
-    <script>
-        function deleteCategory(id, name) {
-            if (confirm(`Are you sure you want to delete "${name}"?\n\nThis action cannot be undone.`)) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = `/Category/Delete/${id}`;
-                
-                // Add anti-forgery token
-                const token = document.createElement('input');
-                token.type = 'hidden';
-                token.name = '__RequestVerificationToken';
-                token.value = document.querySelector('input[name="__RequestVerificationToken"]').value;
-                
-                // Add method override for DELETE
-                const method = document.createElement('input');
-                method.type = 'hidden';
-                method.name = '_method';
-                method.value = 'DELETE';
-                
-                form.appendChild(token);
-                form.appendChild(method);
-                document.body.appendChild(form);
-                form.submit();
-            }
-        }
-    </script>
-    
     <!-- Add anti-forgery token for AJAX calls -->
     @Html.AntiForgeryToken()
 }

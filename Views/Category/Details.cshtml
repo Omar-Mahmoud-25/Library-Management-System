@@ -72,10 +72,13 @@
                             <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-md-2">
                                 <i class="fas fa-edit"></i> Edit
                             </a>
-                            <button type="button" class="btn btn-danger" 
-                                    onclick="deleteCategory(@Model.Id, '@Model.Name')">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
+                            <form asp-action="Delete" asp-route-id="@Model.Id" method="post" style="display: inline;"
+                                  onsubmit="return confirm('Are you sure you want to delete @Model.Name? This action cannot be undone.')">
+                                <input name="_method" type="hidden" value="DELETE" />
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
                         }
                     </div>
                 </div>
@@ -106,33 +109,5 @@
 </div>
 
 @section Scripts {
-    <!-- Add anti-forgery token for AJAX calls -->
-    @Html.AntiForgeryToken()
-    
-    <script>
-        function deleteCategory(id, name) {
-            if (confirm(`Are you sure you want to delete "${name}"?\n\nThis action cannot be undone.`)) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = `/Category/Delete/${id}`;
-                
-                // Add anti-forgery token
-                const token = document.createElement('input');
-                token.type = 'hidden';
-                token.name = '__RequestVerificationToken';
-                token.value = document.querySelector('input[name="__RequestVerificationToken"]').value;
-                
-                // Add method override for DELETE
-                const method = document.createElement('input');
-                method.type = 'hidden';
-                method.name = '_method';
-                method.value = 'DELETE';
-                
-                form.appendChild(token);
-                form.appendChild(method);
-                document.body.appendChild(form);
-                form.submit();
-            }
-        }
-    </script>
+    <!-- Scripts section kept for potential future use -->
 }
