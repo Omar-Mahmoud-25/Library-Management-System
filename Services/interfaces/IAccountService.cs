@@ -1,7 +1,7 @@
 using LibraryManagementSystem.Entities;
 using System.Threading.Tasks;
 
-namespace LibraryManagementSystem.Services.interfaces
+namespace LibraryManagementSystem.Services.Interfaces
 {
 	public interface IAccountService
 	{

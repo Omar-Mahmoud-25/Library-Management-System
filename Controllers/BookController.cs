@@ -23,6 +23,7 @@ public class BookController : Controller
     public async Task<IActionResult> Index()
     {
         var books = await _bookService.GetAll();
+        ViewBag.IsAdmin = User.IsInRole("Admin");
         return View(books);
     }
     [HttpGet]

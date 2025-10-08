@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using LibraryManagementSystem.Context;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using LibraryManagementSystem.Repositories.interfaces;
+using LibraryManagementSystem.Repositories.Interfaces;
 using LibraryManagementSystem.Repositories;
-using LibraryManagementSystem.Services.interfaces;
+using LibraryManagementSystem.Services.Interfaces;
 using LibraryManagementSystem.Services;
 using LibraryManagementSystem.Entities;
 
