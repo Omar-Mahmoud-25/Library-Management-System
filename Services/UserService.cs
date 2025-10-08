@@ -39,5 +39,12 @@ public class UserService : IUserService
         _context.SaveChanges();
         return true;
     }
+    public User? GetUserById(int id)
+    {
+        return _context.Users
+            .AsNoTracking()
+            .FirstOrDefault(u => u.Id == id);
+    }
+
 
 }

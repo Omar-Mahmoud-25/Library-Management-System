@@ -8,5 +8,7 @@ public interface IUserService
     List<User> GetAllUsers();
     bool DeleteUser(int id);
     bool ToggleAdmin(int id);
+    User? GetUserById(int id);
+
 }
 
