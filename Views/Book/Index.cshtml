@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Available Books";
-    ViewData["Title"] = "Books";
     var isAdmin = ViewBag.IsAdmin as bool? ?? false;
     var categories = ViewBag.Categories as List<SelectListItem> ?? new List<SelectListItem>();
     var selectedCategoryId = ViewBag.SelectedCategoryId as int?;
@@ -10,6 +9,11 @@
 }
 
 <style>
+    body {
+        background-color: #f8f9fa;
+        color: #212529;
+    }
+
     .book-card {
         background-color: #1e1e1e;
         color: #fff;
@@ -50,12 +54,6 @@
         margin: 0 3px;
     }
 
-    .category-badge {
-        font-size: 0.75rem;
-        margin-right: 0.25rem;
-        margin-bottom: 0.25rem;
-    }
-
     .filter-section {
         background: rgba(255, 255, 255, 0.1);
         border-radius: 10px;
@@ -67,168 +65,147 @@
         font-size: 0.75rem;
         margin-right: 0.25rem;
         margin-bottom: 0.25rem;
-    }
-
-    .filter-section {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
     }
 </style>
 
-<div class="top-links">
-    @if (isAdmin)
-    {
-        <a asp-controller="User" asp-action="Index" class="@(ViewData["Title"]?.ToString() == "Users" ? "active" : "")">Users</a>
-    }
-    <a asp-controller="Borrowing" asp-action="Index" class="@(ViewData["Title"]?.ToString() == "Borrowings" ? "active" : "")">Borrowings</a>
-    <a asp-controller="Book" asp-action="Index" class="@(ViewData["Title"]?.ToString() == "Books" ? "active" : "")">Books</a>
-</div>
-
-<!-- Filter and Search Section -->
-<div class="filter-section">
-    <form method="get" class="row g-3">
-        <div class="col-md-4">
-            <label for="categorySelect" class="form-label text-light">Filter by Category</label>
-            <select name="categoryId" id="categorySelect" class="form-select">
-                <option value="">All Categories</option>
-                @foreach (var category in categories)
-                {
-                    <option value="@category.Value" selected="@(category.Value == selectedCategoryId?.ToString())">
-                        @category.Text
-                    </option>
-                }
-            </select>
-        </div>
-        <div class="col-md-6">
-            <label for="searchInput" class="form-label text-light">Search Books</label>
-            <input name="search" id="searchInput" type="text" class="form-control" 
-                   placeholder="Search by title, author..." value="@searchTerm" />
-        </div>
-        <div class="col-md-2 d-flex align-items-end">
-            <button type="submit" class="btn btn-primary w-100">
-                <i class="bi bi-search"></i> Filter
-            </button>
-        </div>
-    </form>
-    
-    @if (selectedCategoryId.HasValue || !string.IsNullOrEmpty(searchTerm))
-    {
-        <div class="mt-3">
-            <a asp-action="Index" class="btn btn-outline-light btn-sm">
-                <i class="bi bi-x-circle"></i> Clear Filters
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-book"></i> Available Books</h2>
+        @if (isAdmin)
+        {
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add New Book
             </a>
-            <span class="text-light ms-2">
-                @if (selectedCategoryId.HasValue)
-                {
-                    <span>Category: <strong>@(categories.FirstOrDefault(c => c.Value == selectedCategoryId.ToString())?.Text)</strong></span>
-                }
-                @if (!string.IsNullOrEmpty(searchTerm))
-                {
-                    <span class="ms-2">Search: <strong>"@searchTerm"</strong></span>
-                }
-            </span>
-        </div>
-    }
-</div>
-
-@if (isAdmin)
-{
-    <a class="btn btn-secondary btn-lg" asp-action="Create">
-        <i class="bi bi-plus-circle-dotted"></i>
-        Add Book
-    </a>
-}
-
-@if (!Model.Any())
-{
-    <div class="alert alert-warning mt-5">
-        <h4 class="alert-heading">No books found!</h4>
-        @if (selectedCategoryId.HasValue || !string.IsNullOrEmpty(searchTerm))
-        {
-            <p class="mb-0">No books match your current filters. Try adjusting your search criteria.</p>
-        }
-        else
-        {
-            <p class="mb-0">No books were added yet.</p>
         }
     </div>
-}
-else
-{
-    <div class="mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="text-light mb-0">Found @Model.Count() book(s)</h5>
+
+    <!-- ✅ Filter and Search Section -->
+    <div class="filter-section">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label for="categorySelect" class="form-label text-light">Filter by Category</label>
+                <select name="categoryId" id="categorySelect" class="form-select">
+                    <option value="">All Categories</option>
+                    @foreach (var category in categories)
+                    {
+                        <option value="@category.Value" selected="@(category.Value == selectedCategoryId?.ToString())">
+                            @category.Text
+                        </option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="searchInput" class="form-label text-light">Search Books</label>
+                <input name="search" id="searchInput" type="text" class="form-control"
+                       placeholder="Search by title or author..." value="@searchTerm" />
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> Filter
+                </button>
+            </div>
+        </form>
+
+        @if (selectedCategoryId.HasValue || !string.IsNullOrEmpty(searchTerm))
+        {
+            <div class="mt-3">
+                <a asp-action="AvailableBooks" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-x-circle"></i> Clear Filters
+                </a>
+                <span class="text-light ms-2">
+                    @if (selectedCategoryId.HasValue)
+                    {
+                        <span>Category: <strong>@(categories.FirstOrDefault(c => c.Value == selectedCategoryId.ToString())?.Text)</strong></span>
+                    }
+                    @if (!string.IsNullOrEmpty(searchTerm))
+                    {
+                        <span class="ms-2">Search: <strong>"@searchTerm"</strong></span>
+                    }
+                </span>
+            </div>
+        }
+    </div>
+
+    <!-- ✅ Alerts -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-        
-        <table class="table table-bordered border-primary">
-            <tbody>
-                @foreach (var book in Model)
-                {
-                    <tr class="border-1 border-success">
-                        <td>
-                            <div class="d-flex">
-                                <div class="pe-4">
-                                    <img src="@($"/images/books/{book.CoverImageUrl}")" alt="@book.Title" 
-                                         style="max-width: 90px; height: 120px; object-fit: cover; border-radius: 8px;" />
-                                </div>
-                                <div class="d-flex flex-column justify-content-center">
-                                    <h4 class="text-light mb-2">@book.Title</h4>
-                                    <h5 class="text-secondary mb-2">by @book.Author</h5>
-                                    
-                                    <!-- Categories Display -->
-                                    @if (book.BookCategories?.Any() == true)
-                                    {
-                                        <div class="mb-2">
-                                            @foreach (var bookCategory in book.BookCategories)
-                                            {
-                                                <span class="badge bg-info category-badge">@bookCategory.Category?.Name</span>
-                                            }
-                                        </div>
-                                    }
-                                    
-                                    <!-- Book Info -->
-                                    <div class="text-muted">
-                                        <small>
-                                            <i class="bi bi-calendar"></i> @book.PublishedDate.Year
-                                            <span class="ms-3"><i class="bi bi-stack"></i> @book.CopiesAvailable copies</span>
-                                        </small>
-                                    </div>
-                                    
-                                    @if (!string.IsNullOrEmpty(book.Description))
-                                    {
-                                        <p class="text-light mt-2 mb-0" style="font-size: 0.9rem;">
-                                            @(book.Description.Length > 150 ? book.Description.Substring(0, 150) + "..." : book.Description)
-                                        </p>
-                                    }
-                                </div>
-                            </div>
-                        </td>
-                        <td class="align-middle" style="width: 180px;">
-                            <div class="d-flex justify-content-end">
-                                <a class="btn btn-primary rounded-3 me-2" asp-action="Details" asp-route-id="@book.Id" title="View Details">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                                @if (isAdmin)
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- ✅ Books Grid -->
+    @if (Model.Any())
+    {
+        <div class="row g-4">
+            @foreach (var book in Model)
+            {
+                <div class="col-md-4 col-lg-3">
+                    <div class="book-card shadow-sm">
+                        <img src="@($"/images/{book.CoverImageUrl}")" alt="@book.Title" class="book-img" />
+                        <div class="book-body">
+                            <h5 class="fw-bold">@book.Title</h5>
+                            <p class="mb-1"><strong>Author:</strong> @book.Author</p>
+                            <div>
+                                @if (book.BookCategories?.Any() == true)
                                 {
-                                    <a class="btn btn-info rounded-3 me-2" asp-action="Edit" asp-route-id="@book.Id" title="Edit Book">
-                                        <i class="bi bi-pencil-fill"></i>
-                                    </a>
-                                    <button type="button" class="btn btn-danger rounded-3 js-delete" data-id="@book.Id" title="Delete Book">
-                                        <i class="bi bi-trash3"></i>
-                                    </button>
+                                    @foreach (var bc in book.BookCategories)
+                                    {
+                                        <span class="badge bg-info category-badge">@bc.Category?.Name</span>
+                                    }
                                 }
                             </div>
-                        </td>
-                    </tr>
-                }
-           </tbody>
-    </table>
-</div> <!-- close mt-4 div -->
-}
+
+                            <div class="action-buttons">
+                                <a class="btn btn-primary" asp-action="Details" asp-route-id="@book.Id">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+
+                                @if (isAdmin)
+                                {
+                                    <a class="btn btn-warning text-dark" asp-action="Edit" asp-route-id="@book.Id">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+
+                                    <form asp-action="Delete" asp-route-id="@book.Id" method="post" class="d-inline"
+                                          onsubmit="return confirm('Are you sure you want to delete @book.Title?');">
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="bi bi-trash3-fill"></i>
+                                        </button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="fas fa-book fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">No Books Found</h4>
+            <p class="text-muted">Try changing the filters or search criteria.</p>
+            @if (isAdmin)
+            {
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add First Book
+                </a>
+            }
+        </div>
+    }
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
-
