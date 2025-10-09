@@ -13,9 +13,6 @@ public class Book
     [Required, MaxLength(100)]
     public string Author { get; set; }
 
-    [Required]
-    public string Category { get; set; }
-
     [MaxLength(1000)]
     public string Description { get; set; }
     [Required]

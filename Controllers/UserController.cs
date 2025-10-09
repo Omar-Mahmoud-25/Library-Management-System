@@ -1,7 +1,8 @@
-﻿using LibraryManagementSystem.Entities;
+using LibraryManagementSystem.Entities;
 using LibraryManagementSystem.Models;
 using LibraryManagementSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 
 public class UserController : Controller
@@ -19,7 +20,8 @@ public class UserController : Controller
         var users = _userService.GetAllUsers();
         return View(users);
     }
-    [HttpGet]
+    
+    [HttpPost]
     [Authorize]
     public IActionResult Delete(int id)
     {
@@ -89,4 +91,81 @@ public class UserController : Controller
         return View(viewModel);
     }
 
+    [Authorize]
+    public async Task<IActionResult> Profile()
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var userProfile = await _userService.GetUserProfileAsync(userId);
+        
+        if (userProfile == null)
+        {
+            return NotFound();
+        }
+        
+        return View(userProfile);
+    }
+
+    [HttpPost]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Profile(UserProfileViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        
+        // Ensure user can only edit their own profile (or admin can edit any)
+        if (model.Id != userId && !User.IsInRole("Admin"))
+        {
+            return Forbid();
+        }
+
+        var success = await _userService.UpdateUserProfileAsync(model);
+        
+        if (success)
+        {
+            TempData["SuccessMessage"] = "Profile updated successfully!";
+            return RedirectToAction(nameof(Profile));
+        }
+        else
+        {
+            ModelState.AddModelError("", "An error occurred while updating your profile.");
+            return View(model);
+        }
+    }
+
+    [HttpGet]
+    [Authorize]
+    public IActionResult ChangePassword()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var success = await _userService.ChangePasswordAsync(userId, model.CurrentPassword, model.NewPassword);
+        
+        if (success)
+        {
+            TempData["SuccessMessage"] = "Password changed successfully!";
+            return RedirectToAction(nameof(Profile));
+        }
+        else
+        {
+            ModelState.AddModelError("", "Current password is incorrect.");
+            return View(model);
+        }
+    }
 }

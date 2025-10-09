@@ -1,11 +1,7 @@
 using LibraryManagementSystem.Models;
-using LibraryManagementSystem.Services;
 using LibraryManagementSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 
 namespace LibraryManagementSystem.Controllers;
 
@@ -21,9 +17,13 @@ public class BookController : Controller
         _CategoriesService = categoryService;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int? categoryId, string? search)
     {
-        var books = await _bookService.GetAll();
+        var books = await _bookService.GetAll(categoryId, search);
+        var categories = await _CategoriesService.GetSelectList();
+        ViewBag.Categories = categories;
+        ViewBag.SelectedCategoryId = categoryId;
+        ViewBag.SearchTerm = search;
         ViewBag.IsAdmin = User.IsInRole("Admin");
         return View(books);
     }
@@ -67,9 +67,9 @@ public class BookController : Controller
             Description = book.Description,
             PublishedDate = book.PublishedDate,
             CopiesAvailable = book.CopiesAvailable,
-            CoverImageUrl = book.CoverImageUrl,
+            CurrentCoverImageUrl = book.CoverImageUrl,
             Categories = await _CategoriesService.GetSelectList(),
-            SelectedCategoryId = book.BookCategories.FirstOrDefault()?.CategoryId ?? 0
+            SelectedCategoryIds = book.BookCategories.Select(bc => bc.CategoryId).ToList()
         };
 
         return View(viewModel);

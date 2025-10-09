@@ -3,40 +3,193 @@
 
 @{
     ViewData["Title"] = Model.Title;
+    var isAdmin = ViewBag.IsAdmin as bool? ?? false;
 }
 
-<div class="card border-primary rounded-4 mt-5 overflow-hidden shadow">
+<style>
+    .category-badge {
+        font-size: 0.9rem;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    .book-detail-card {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        border: 2px solid #007bff;
+    }
+</style>
+
+<div class="card book-detail-card border-primary rounded-4 mt-5 overflow-hidden">
     <div class="card-body p-0">
-        <div class="row">
+        <div class="row g-0">
             <div class="col-md-8 px-5 py-4 d-flex flex-column justify-content-between">
                 <div>
-                    <h1 class="text-primary fw-bolder">@Model.Title</h1>
-                    <span class="badge bg-info fs-5 mb-4">@Model.Category</span>
-                    <h4 class="text-secondary mb-3">By @Model.Author</h4>
-                    <p class="fs-5">@Model.Description</p>
+                    <h1 class="text-primary fw-bolder mb-3">@Model.Title</h1>
+                    
+                    <!-- Categories Display -->
+                    @if (Model.BookCategories?.Any() == true)
+                    {
+                        <div class="mb-3">
+                            @foreach (var bookCategory in Model.BookCategories)
+                            {
+                                <span class="badge bg-info category-badge">
+                                    <i class="bi bi-tag"></i> @bookCategory.Category?.Name
+                                </span>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="mb-3">
+                            <span class="badge bg-secondary category-badge">
+                                <i class="bi bi-question-circle"></i> Uncategorized
+                            </span>
+                        </div>
+                    }
+                    
+                    <h4 class="text-secondary mb-4">by @Model.Author</h4>
+                    
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <div class="mb-4">
+                            <h6 class="text-muted">Description:</h6>
+                            <p class="fs-5 text-light">@Model.Description</p>
+                        </div>
+                    }
                 </div>
 
-                <div class="mt-3">
-                    <p class="fs-6">
-                        <strong>Publication Year:</strong>@Model.PublishedDate.Year
-                    </p>
-                    <p class="fs-6">
-                        <strong>Available Copies:</strong>@Model.CopiesAvailable
-                    </p>
+                <div class="mt-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card bg-dark border-secondary mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title text-light">
+                                        <i class="bi bi-calendar3"></i> Publication Info
+                                    </h6>
+                                    <p class="card-text text-muted mb-0">
+                                        Published in <strong class="text-light">@Model.PublishedDate.Year</strong>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-dark border-secondary mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title text-light">
+                                        <i class="bi bi-stack"></i> Availability
+                                    </h6>
+                                    <p class="card-text text-muted mb-0">
+                                        <strong class="text-light">@Model.CopiesAvailable</strong> copies available
+                                        @if (Model.CopiesAvailable == 0)
+                                        {
+                                            <span class="badge bg-danger ms-2">Out of Stock</span>
+                                        }
+                                        else if (Model.CopiesAvailable <= 3)
+                                        {
+                                            <span class="badge bg-warning ms-2">Low Stock</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success ms-2">In Stock</span>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <img src="@($"/images/{Model.CoverImageUrl}")" alt="@Model.Title" class="w-100 h-100 object-fit-cover" />
+            
+            <div class="col-md-4 position-relative">
+                <img src="/images/books/@(Model.CoverImageUrl ?? "default-book-cover.jpg")" 
+                     alt="@Model.Title" 
+                     class="w-100 h-100 object-fit-cover" 
+                     style="min-height: 400px;" />
+                
+                <!-- Overlay with book stats -->
+                <div class="position-absolute bottom-0 start-0 w-100 bg-dark bg-opacity-75 p-3">
+                    <small class="text-light">
+                        <i class="bi bi-eye"></i> Book ID: #@Model.Id
+                    </small>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="mt-4">
+<!-- Action Buttons -->
+<div class="mt-4 d-flex flex-wrap gap-2">
     <a asp-action="Index" class="btn btn-outline-secondary">
         <i class="bi bi-arrow-left"></i> Back to List
     </a>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info text-white ms-2">
-        <i class="bi bi-pencil-fill"></i> Edit
-    </a>
+    
+    @if (isAdmin)
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning text-white">
+            <i class="bi bi-pencil-fill"></i> Edit Book
+        </a>
+        
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+            <i class="bi bi-trash3"></i> Delete Book
+        </button>
+    }
+    
+    @* Future: Add borrowing functionality *@
+    @if (Model.CopiesAvailable > 0)
+    {
+        <button type="button" class="btn btn-success" disabled>
+            <i class="bi bi-book"></i> Borrow (Coming Soon)
+        </button>
+    }
 </div>
+
+<!-- Related Books Section (Future Enhancement) -->
+@if (Model.BookCategories?.Any() == true)
+{
+    <div class="mt-5">
+        <h5 class="text-light mb-3">
+            <i class="bi bi-collection"></i> Related Categories
+        </h5>
+        <div class="d-flex flex-wrap gap-2">
+            @foreach (var bookCategory in Model.BookCategories)
+            {
+                <a href="@Url.Action("Index", new { categoryId = bookCategory.CategoryId })" 
+                   class="btn btn-outline-info btn-sm">
+                    <i class="bi bi-search"></i> More @bookCategory.Category?.Name Books
+                </a>
+            }
+        </div>
+    </div>
+}
+
+@if (isAdmin)
+{
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-light">
+                        <i class="bi bi-exclamation-triangle text-warning"></i> Confirm Delete
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-light">
+                    <p>Are you sure you want to delete "<strong>@Model.Title</strong>"?</p>
+                    <p class="text-warning">
+                        <i class="bi bi-warning"></i> This action cannot be undone and will permanently remove the book from the system.
+                    </p>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form asp-action="Delete" asp-route-id="@Model.Id" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash3"></i> Delete Book
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}

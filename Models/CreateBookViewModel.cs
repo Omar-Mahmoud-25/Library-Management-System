@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.FileProviders;
 using System.ComponentModel.DataAnnotations;
 
 namespace LibraryManagementSystem.Models
@@ -7,13 +6,13 @@ namespace LibraryManagementSystem.Models
     public class CreateBookViewModel
     {
         [Required, MaxLength(100)]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         [Required, MaxLength(100)]
-        public string Author { get; set; }
+        public string Author { get; set; } = string.Empty;
 
         [MaxLength(1000)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Required]
         public DateTime PublishedDate { get; set; }
@@ -21,12 +20,12 @@ namespace LibraryManagementSystem.Models
         [Required]
         public int CopiesAvailable { get; set; } = 1;
 
-        // [Required, Url]
-        // public IFileInfo CoverImageUrl { get; set; }
+        [Display(Name = "Cover Image")]
+        public IFormFile? CoverImageUrl { get; set; }
 
         [Required]
-        [Display(Name = "Category")]
-        public int CategoryId { get; set; }
+        [Display(Name = "Categories")]
+        public List<int> SelectedCategoryIds { get; set; } = new();
 
         public List<SelectListItem> Categories { get; set; } = new();
     }
