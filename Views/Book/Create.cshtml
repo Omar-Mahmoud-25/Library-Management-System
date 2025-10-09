@@ -4,28 +4,79 @@
     ViewData["Title"] = "Add Book";
 }
 
-<h5>
+<style>
+    .create-book-form {
+        background-color: #1e1e1e;
+        color: #fff;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+    }
+
+    .create-book-form .form-label {
+        color: #ccc;
+        font-weight: 500;
+    }
+
+    .create-book-form .form-control,
+    .create-book-form .form-select,
+    .create-book-form textarea {
+        background-color: #2c2c2c;
+        border: 1px solid #444;
+        color: #fff;
+    }
+
+    .create-book-form .form-control::placeholder,
+    .create-book-form textarea::placeholder {
+        color: #888;
+    }
+
+    .create-book-form .form-text {
+        color: #fff; 
+        font-size: 0.9rem;
+    }
+
+    .create-book-form .btn-primary {
+        background-color: #00ff88;
+        border-color: #00ff88;
+        color: #000;
+    }
+
+    .create-book-form .btn-primary:hover {
+        background-color: #00cc6a;
+        border-color: #00cc6a;
+        color: #fff;
+    }
+
+    .cover-preview {
+        border-radius: 10px;
+        border: 1px solid #333;
+    }
+</style>
+
+<h5 class="text-white">
     <i class="bi bi-plus-circle-dotted"></i>
     Add a new Book
 </h5>
 
-<form asp-controller="Book" asp-action="Create" method="post" enctype="multipart/form-data">
-    <div class="row">
-        <div class="col-md-6">
+<div class="create-book-form">
+    <form asp-controller="Book" asp-action="Create" method="post" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-6">
 
-            <!-- Book Title -->
-            <div class="form-group">
-                <label asp-for="Title" class="form-label mt-4"></label>
-                <input type="text" class="form-control" asp-for="Title" placeholder="Enter book title" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
+                <!-- Book Title -->
+                <div class="form-group">
+                    <label asp-for="Title" class="form-label mt-4"></label>
+                    <input type="text" class="form-control" asp-for="Title" placeholder="Enter book title" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
 
-            <!-- Author -->
-            <div class="form-group">
-                <label asp-for="Author" class="form-label mt-4"></label>
-                <input type="text" class="form-control" asp-for="Author" placeholder="Enter author name" />
-                <span asp-validation-for="Author" class="text-danger"></span>
-            </div>
+                <!-- Author -->
+                <div class="form-group">
+                    <label asp-for="Author" class="form-label mt-4"></label>
+                    <input type="text" class="form-control" asp-for="Author" placeholder="Enter author name" />
+                    <span asp-validation-for="Author" class="text-danger"></span>
+                </div>
 
             <!-- Categories (Multiple Selection) -->
             <div class="form-group">
@@ -94,8 +145,8 @@
                 </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

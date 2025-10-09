@@ -1,4 +1,6 @@
 using LibraryManagementSystem.Models;
+using LibraryManagementSystem.Models.ViewModels;
+using LibraryManagementSystem.Services;
 using LibraryManagementSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -93,19 +95,45 @@ public class BookController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpDelete]
+    [HttpGet]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Delete(int id)
+    public IActionResult Delete(int id)
+    {
+        var book = _bookService.GetById(id);
+        if (book == null)
+            return NotFound();
+
+        var viewModel = new BookViewModel
+        {
+            Id = book.Id,
+            Title = book.Title,
+            Author = book.Author,
+            Category = book.BookCategories.FirstOrDefault()?.Category?.Name ?? "",
+            CoverImageUrl = book.CoverImageUrl
+        };
+
+        return View(viewModel);
+    }
+
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var isDeleted = await _bookService.DeleteAsync(id);
+        if (!isDeleted)
+            return NotFound();
 
-        return isDeleted ? Ok() : BadRequest();
+        TempData["SuccessMessage"] = "Book deleted successfully!";
+        return RedirectToAction(nameof(Index));
     }
+
+    [HttpGet]
     public IActionResult Details(int id)
     {
-        var book = _bookService.GetById(id); 
+        var book = _bookService.GetById(id);
 
-        if (book is null)
+        if (book == null)
             return NotFound();
 
         return View(book); 

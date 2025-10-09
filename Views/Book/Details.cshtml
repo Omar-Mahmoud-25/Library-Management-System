@@ -20,6 +20,61 @@
     }
 </style>
 
+<style>
+    .book-details-card {
+        background-color: #1e1e1e;
+        color: #fff;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 255, 136, 0.2);
+        margin-top: 40px;
+    }
+
+   
+    .book-details-card h1 {
+        color: #1e90ff; 
+    }
+
+    .book-details-card h4,
+    .book-details-card p {
+        color: #ccc;
+    }
+
+    
+    .book-details-card .badge {
+        background-color: #ffb84d; 
+        color: #000;
+    }
+
+    .book-details-card img {
+        border-radius: 0;
+        object-fit: cover;
+    }
+
+    .book-details-actions .btn-edit {
+        background-color: #ffd700; 
+        border-color: #ffd700;
+        color: #000;
+    }
+
+    .book-details-actions .btn-edit:hover {
+        background-color: #e6c200;
+        border-color: #e6c200;
+        color: #000;
+    }
+
+    .book-details-actions .btn-outline-secondary {
+        color: #ccc;
+        border-color: #555;
+    }
+
+    .book-details-actions .btn-outline-secondary:hover {
+        color: #fff;
+        border-color: #777;
+    }
+</style>
+
+<div class="card book-details-card">
 <div class="card book-detail-card border-primary rounded-4 mt-5 overflow-hidden">
     <div class="card-body p-0">
         <div class="row g-0">
@@ -118,8 +173,7 @@
     </div>
 </div>
 
-<!-- Action Buttons -->
-<div class="mt-4 d-flex flex-wrap gap-2">
+<div class="mt-4 book-details-actions">
     <a asp-action="Index" class="btn btn-outline-secondary">
         <i class="bi bi-arrow-left"></i> Back to List
     </a>

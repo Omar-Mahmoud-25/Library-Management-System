@@ -4,10 +4,79 @@
     ViewData["Title"] = "Edit Book";
 }
 
-<h3 class="mb-4">
+<style>
+    .edit-book-form {
+        background-color: #1e1e1e;
+        color: #fff;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+    }
+
+    .edit-book-form .form-label {
+        color: #ccc;
+        font-weight: 500;
+    }
+
+    .edit-book-form .form-control,
+    .edit-book-form .form-select {
+        background-color: #2c2c2c;
+        border: 1px solid #444;
+        color: #fff;
+    }
+
+    .edit-book-form .form-control::placeholder {
+        color: #888;
+    }
+
+    .edit-book-form .form-text {
+        color: #fff; /* اللون أصبح أبيض فاتح */
+        font-size: 0.9rem;
+    }
+
+    .edit-book-form .btn-primary {
+        background-color: #00ff88;
+        border-color: #00ff88;
+        color: #000;
+    }
+
+    .edit-book-form .btn-primary:hover {
+        background-color: #00cc6a;
+        border-color: #00cc6a;
+        color: #fff;
+    }
+
+    .edit-book-form .btn-secondary {
+        background-color: #444;
+        border-color: #555;
+        color: #ccc;
+    }
+
+    .edit-book-form .btn-secondary:hover {
+        background-color: #555;
+        color: #fff;
+    }
+
+    .current-cover img {
+        border-radius: 10px;
+        border: 1px solid #333;
+        max-height: 300px;
+    }
+</style>
+
+<h3 class="mb-4 text-white">
     <i class="bi bi-pencil-square"></i> Edit Book
 </h3>
 
+<div class="edit-book-form">
+    <form asp-action="Edit" asp-controller="Book" method="post" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label asp-for="Title" class="form-label"></label>
+                    <input asp-for="Title" class="form-control" placeholder="Enter book title" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
 <form asp-action="Edit" asp-controller="Book" method="post" enctype="multipart/form-data">
     <input asp-for="Id" type="hidden" />
     <input asp-for="CurrentCoverImageUrl" type="hidden" />
@@ -20,11 +89,11 @@
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Author" class="form-label"></label>
-                <input asp-for="Author" class="form-control" placeholder="Enter author name" />
-                <span asp-validation-for="Author" class="text-danger"></span>
-            </div>
+                <div class="form-group mb-3">
+                    <label asp-for="Author" class="form-label"></label>
+                    <input asp-for="Author" class="form-control" placeholder="Enter author name" />
+                    <span asp-validation-for="Author" class="text-danger"></span>
+                </div>
 
             <div class="form-group mb-3">
                 <label asp-for="SelectedCategoryIds" class="form-label"></label>
@@ -35,17 +104,17 @@
                 <span asp-validation-for="SelectedCategoryIds" class="text-danger"></span>
             </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="PublishedDate" class="form-label"></label>
-                <input asp-for="PublishedDate" class="form-control" type="date" />
-                <span asp-validation-for="PublishedDate" class="text-danger"></span>
-            </div>
+                <div class="form-group mb-3">
+                    <label asp-for="PublishedDate" class="form-label"></label>
+                    <input asp-for="PublishedDate" class="form-control" type="date" />
+                    <span asp-validation-for="PublishedDate" class="text-danger"></span>
+                </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="CopiesAvailable" class="form-label"></label>
-                <input asp-for="CopiesAvailable" class="form-control" type="number" min="0" />
-                <span asp-validation-for="CopiesAvailable" class="text-danger"></span>
-            </div>
+                <div class="form-group mb-3">
+                    <label asp-for="CopiesAvailable" class="form-label"></label>
+                    <input asp-for="CopiesAvailable" class="form-control" type="number" min="0" />
+                    <span asp-validation-for="CopiesAvailable" class="text-danger"></span>
+                </div>
 
             <div class="form-group mb-3">
                 <label asp-for="Description" class="form-label"></label>
@@ -120,8 +189,8 @@
                 </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

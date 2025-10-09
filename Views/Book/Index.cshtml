@@ -1,7 +1,7 @@
-﻿@using LibraryManagementSystem.Entities
-@model IEnumerable<Book>
+﻿@model List<LibraryManagementSystem.Entities.Book>
 
 @{
+    ViewData["Title"] = "Available Books";
     ViewData["Title"] = "Books";
     var isAdmin = ViewBag.IsAdmin as bool? ?? false;
     var categories = ViewBag.Categories as List<SelectListItem> ?? new List<SelectListItem>();
@@ -10,34 +10,57 @@
 }
 
 <style>
-    .top-links {
-        display: flex;
-        gap: 30px;
-        margin-top: 20px;
+    .book-card {
+        background-color: #1e1e1e;
+        color: #fff;
+        border: 1px solid #333;
+        border-radius: 10px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
         margin-bottom: 20px;
-        font-size: 20px;
     }
 
-    .top-links a {
-        text-decoration: none;
-        color: #ccc;
-        position: relative;
-        font-weight: 500;
-        transition: 0.3s;
+    .book-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
     }
 
-    .top-links a:hover {
-        color: white;
-    }
-
-    .top-links a.active::after {
-        content: "";
-        position: absolute;
-        bottom: -5px;
-        left: 0;
+    .book-img {
+        border-radius: 10px 10px 0 0;
+        height: 250px;
+        object-fit: cover;
         width: 100%;
-        height: 2px;
-        background-color: #00ff88;
+    }
+
+    .book-body {
+        padding: 15px;
+    }
+
+    .book-body h5 {
+        color: #00ff88;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    .action-buttons .btn {
+        flex: 1;
+        margin: 0 3px;
+    }
+
+    .category-badge {
+        font-size: 0.75rem;
+        margin-right: 0.25rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .filter-section {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
     }
 
     .category-badge {
@@ -203,9 +226,8 @@ else
             </tbody>
         </table>
     </div>
-}
+</div>
 
-@section Scripts
-{
-    <script src="~/js/books-index.js" asp-append-version="true"></script>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }
