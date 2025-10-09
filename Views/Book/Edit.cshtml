@@ -30,7 +30,7 @@
     }
 
     .edit-book-form .form-text {
-        color: #fff; /* اللون أصبح أبيض فاتح */
+        color: #fff; 
         font-size: 0.9rem;
     }
 
@@ -70,6 +70,9 @@
 
 <div class="edit-book-form">
     <form asp-action="Edit" asp-controller="Book" method="post" enctype="multipart/form-data">
+        <input asp-for="Id" type="hidden" />
+        <input asp-for="CurrentCoverImageUrl" type="hidden" />
+    
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group mb-3">
@@ -77,17 +80,6 @@
                     <input asp-for="Title" class="form-control" placeholder="Enter book title" />
                     <span asp-validation-for="Title" class="text-danger"></span>
                 </div>
-<form asp-action="Edit" asp-controller="Book" method="post" enctype="multipart/form-data">
-    <input asp-for="Id" type="hidden" />
-    <input asp-for="CurrentCoverImageUrl" type="hidden" />
-    
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group mb-3">
-                <label asp-for="Title" class="form-label"></label>
-                <input asp-for="Title" class="form-control" placeholder="Enter book title" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
 
                 <div class="form-group mb-3">
                     <label asp-for="Author" class="form-label"></label>
@@ -95,14 +87,16 @@
                     <span asp-validation-for="Author" class="text-danger"></span>
                 </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="SelectedCategoryIds" class="form-label"></label>
-                <select asp-for="SelectedCategoryIds" asp-items="Model.Categories" class="form-select" multiple>
-                    <option disabled>Select one or more categories</option>
-                </select>
-                <small class="form-text text-muted">Hold Ctrl (Cmd on Mac) to select multiple categories</small>
-                <span asp-validation-for="SelectedCategoryIds" class="text-danger"></span>
-            </div>
+                <div class="form-group mb-3">
+                    <label asp-for="SelectedCategoryIds" class="form-label"></label>
+                    <select asp-for="SelectedCategoryIds" asp-items="Model.Categories" class="form-select" multiple>
+                        <option disabled>Select one or more categories</option>
+                    </select>
+                    <small class="form-text text-muted">
+                        Hold Ctrl (Cmd on Mac) to select multiple categories
+                    </small>
+                    <span asp-validation-for="SelectedCategoryIds" class="text-danger"></span>
+                </div>
 
                 <div class="form-group mb-3">
                     <label asp-for="PublishedDate" class="form-label"></label>
@@ -116,76 +110,80 @@
                     <span asp-validation-for="CopiesAvailable" class="text-danger"></span>
                 </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Description" class="form-label"></label>
-                <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter book description"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="CoverImageUrl" class="form-label"></label>
-                <input asp-for="CoverImageUrl" class="form-control" type="file" accept="image/*" />
-                <small class="form-text text-muted">Upload a new cover image if you want to replace the current one. Allowed: .jpg, .jpeg, .png, .gif, .webp (Max 5 MB)</small>
-                <span asp-validation-for="CoverImageUrl" class="text-danger d-block"></span>
-            </div>
-
-            <div class="form-group mt-4">
-                <button type="submit" class="btn btn-primary me-2">
-                    <i class="bi bi-save"></i> Save Changes
-                </button>
-                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info me-2">
-                    <i class="bi bi-eye"></i> View Details
-                </a>
-                <a asp-action="Index" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Back to List
-                </a>
-            </div>
-        </div>
-
-        <!-- Current Book Info & Preview -->
-        <div class="col-md-6">
-            <div class="card bg-dark border-light">
-                <div class="card-header">
-                    <h6 class="text-light mb-0">Current Book</h6>
+                <div class="form-group mb-3">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter book description"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
-                <div class="card-body text-center">
-                    <img src="/images/books/@(Model.CurrentCoverImageUrl ?? "default-book-cover.jpg")" 
-                         alt="Current Book Cover" class="img-thumbnail mb-3" style="max-height:250px;" />
-                    
-                    <div class="text-start">
-                        <h6 class="text-light">@Model.Title</h6>
-                        <p class="text-secondary mb-2">by @Model.Author</p>
+
+                <div class="form-group mb-3">
+                    <label asp-for="CoverImageUrl" class="form-label"></label>
+                    <input asp-for="CoverImageUrl" class="form-control" type="file" accept="image/*" />
+                    <small class="form-text text-muted">
+                        Upload a new cover image if you want to replace the current one.
+                        Allowed: .jpg, .jpeg, .png, .gif, .webp (Max 5 MB)
+                    </small>
+                    <span asp-validation-for="CoverImageUrl" class="text-danger d-block"></span>
+                </div>
+
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="bi bi-save"></i> Save Changes
+                    </button>
+                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info me-2">
+                        <i class="bi bi-eye"></i> View Details
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </div>
+
+            <!-- Current Book Info & Preview -->
+            <div class="col-md-6">
+                <div class="card bg-dark border-light">
+                    <div class="card-header">
+                        <h6 class="text-light mb-0">Current Book</h6>
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="/images/books/@(Model.CurrentCoverImageUrl ?? "default-book-cover.jpg")" 
+                             alt="Current Book Cover" class="img-thumbnail mb-3" style="max-height:250px;" />
                         
-                        @if (Model.SelectedCategoryIds?.Any() == true)
-                        {
-                            <div class="mb-2">
-                                @foreach (var categoryId in Model.SelectedCategoryIds)
-                                {
-                                    var categoryName = Model.Categories?.FirstOrDefault(c => c.Value == categoryId.ToString())?.Text;
-                                    if (!string.IsNullOrEmpty(categoryName))
+                        <div class="text-start">
+                            <h6 class="text-light">@Model.Title</h6>
+                            <p class="text-secondary mb-2">by @Model.Author</p>
+                            
+                            @if (Model.SelectedCategoryIds?.Any() == true)
+                            {
+                                <div class="mb-2">
+                                    @foreach (var categoryId in Model.SelectedCategoryIds)
                                     {
-                                        <span class="badge bg-info me-1">@categoryName</span>
+                                        var categoryName = Model.Categories?.FirstOrDefault(c => c.Value == categoryId.ToString())?.Text;
+                                        if (!string.IsNullOrEmpty(categoryName))
+                                        {
+                                            <span class="badge bg-info me-1">@categoryName</span>
+                                        }
                                     }
-                                }
-                            </div>
-                        }
-                        
-                        <small class="text-muted">
-                            <i class="bi bi-calendar"></i> @Model.PublishedDate.Year<br>
-                            <i class="bi bi-stack"></i> @Model.CopiesAvailable copies available
-                        </small>
+                                </div>
+                            }
+                            
+                            <small class="text-muted">
+                                <i class="bi bi-calendar"></i> @Model.PublishedDate.Year<br>
+                                <i class="bi bi-stack"></i> @Model.CopiesAvailable copies available
+                            </small>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- New Image Preview (if uploaded) -->
-            <div class="card bg-dark border-light mt-3" id="newImagePreview" style="display: none;">
-                <div class="card-header">
-                    <h6 class="text-light mb-0">New Cover Preview</h6>
-                </div>
-                <div class="card-body text-center">
-                    <img id="newCoverPreview" src="" alt="New Cover Preview" 
-                         class="img-thumbnail" style="max-height:200px;" />
+                <!-- New Image Preview (if uploaded) -->
+                <div class="card bg-dark border-light mt-3" id="newImagePreview" style="display: none;">
+                    <div class="card-header">
+                        <h6 class="text-light mb-0">New Cover Preview</h6>
+                    </div>
+                    <div class="card-body text-center">
+                        <img id="newCoverPreview" src="" alt="New Cover Preview" 
+                             class="img-thumbnail" style="max-height:200px;" />
+                    </div>
                 </div>
             </div>
         </div>

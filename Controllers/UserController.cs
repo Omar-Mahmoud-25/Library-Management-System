@@ -23,9 +23,9 @@ public class UserController : Controller
     
     [HttpPost]
     [Authorize]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var user = _userService.GetUserById(id);
+        var user = await _userService.GetUserByIdAsync(id);
         if (user == null)
             return NotFound();
 
@@ -44,6 +44,7 @@ public class UserController : Controller
 
         return View(viewModel);
     }
+
 
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
@@ -67,9 +68,9 @@ public class UserController : Controller
 
     [Authorize(Roles = "Admin")]
     [HttpGet]
-    public IActionResult Details(int id)
+    public async Task<IActionResult> Details(int id)
     {
-        var user = _userService.GetUserById(id);
+        var user = await _userService.GetUserByIdAsync(id); 
         if (user == null)
         {
             return NotFound();
@@ -90,6 +91,7 @@ public class UserController : Controller
 
         return View(viewModel);
     }
+
 
     [Authorize]
     public async Task<IActionResult> Profile()
