@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using LibraryManagementSystem.Models;
 using LibraryManagementSystem.Models.ViewModels;
 using LibraryManagementSystem.Services;
@@ -10,15 +11,19 @@ namespace LibraryManagementSystem.Controllers;
 public class BookController : Controller
 {
     private readonly IBookService _bookService;
+    private readonly IBorrowingService _borrowingService;
     private readonly ICategoryService _CategoriesService;
     public BookController(
             IBookService bookService,
+            IBorrowingService borrowingService,
             ICategoryService categoryService)
     {
         _bookService = bookService;
         _CategoriesService = categoryService;
+        _borrowingService = borrowingService;
     }
 
+    [Authorize]
     public async Task<IActionResult> Index(int? categoryId, string? search)
     {
         var books = await _bookService.GetAll(categoryId, search);
@@ -30,6 +35,7 @@ public class BookController : Controller
         return View(books);
     }
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create()
     {
         var viewModel = new CreateBookViewModel
@@ -129,10 +135,12 @@ public class BookController : Controller
     }
 
     [HttpGet]
+    [Authorize]
     public IActionResult Details(int id)
     {
         var book = _bookService.GetById(id);
-        ViewBag.canBeBorrowed = book?.CopiesAvailable > 0;
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        ViewBag.canBeBorrowed = book?.CopiesAvailable > 0 && _borrowingService.CanUserBorrowBookAsync(id, userId).Result;
 
         if (book == null)
             return NotFound();

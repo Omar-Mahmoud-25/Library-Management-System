@@ -20,30 +20,6 @@ public class UserController : Controller
         var users = _userService.GetAllUsers();
         return View(users);
     }
-    
-    [HttpPost]
-    [Authorize]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var user = await _userService.GetUserByIdAsync(id);
-        if (user == null)
-            return NotFound();
-
-        var viewModel = new UserViewModel
-        {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Email = user.Email,
-            PhoneNumber = user.PhoneNumber,
-            JoiningDate = user.JoiningDate,
-            IsAdmin = user.IsAdmin,
-            IsActive = user.IsActive,
-            BorrowedBooksCount = user.Borrowings?.Count ?? 0
-        };
-
-        return View(viewModel);
-    }
 
 
     [HttpPost, ActionName("Delete")]

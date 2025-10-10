@@ -19,20 +19,10 @@ public class BorrowingController : Controller
 
     // Admin view - All borrowings with filtering
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Index(int? userId, int? bookId, string? status)
+    public async Task<IActionResult> Index(string? status, string? search)
     {   
         var borrowings = await _borrowingService.GetAllBorrowingsAsync();
 
-        // Apply filters
-        if (userId.HasValue)
-        {
-            borrowings = borrowings.Where(b => b.UserId == userId.Value).ToList();
-        }
-
-        if (bookId.HasValue)
-        {
-            borrowings = borrowings.Where(b => b.BookId == bookId.Value).ToList();
-        }
 
         if (!string.IsNullOrEmpty(status))
         {
@@ -50,15 +40,20 @@ public class BorrowingController : Controller
             }
         }
 
+        if (!string.IsNullOrEmpty(search))
+        {
+            borrowings = borrowings.Where(b => 
+                b.Book.Title.Contains(search, StringComparison.OrdinalIgnoreCase) || 
+                b.User.FullName.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                b.User.Email.Contains(search, StringComparison.OrdinalIgnoreCase)
+            ).ToList();
+        }
+
         // Statistics
         ViewBag.BorrowedCount = await _borrowingService.GetBorrowedCountAsync();
         ViewBag.OverdueCount = await _borrowingService.GetOverdueCountAsync();
         ViewBag.ReturnedCount = await _borrowingService.GetReturnedCountAsync();
         ViewBag.TotalCount = ViewBag.BorrowedCount + ViewBag.ReturnedCount;
-        
-        // Filter data for dropdowns
-        ViewBag.SelectedUserId = userId;
-        ViewBag.SelectedBookId = bookId;
         ViewBag.IsAdmin = true;
 
         return View(borrowings);
@@ -122,7 +117,7 @@ public class BorrowingController : Controller
         if (!await _borrowingService.CanUserBorrowBookAsync(bookId, userId))
         {
             TempData["ErrorMessage"] = "Unable to borrow this book. It might be unavailable or you have reached your borrowing limit (5 books maximum).";
-            return RedirectToAction("Details", "Book", new { id = bookId });
+            return RedirectToAction("Index", "Book", new { id = bookId });
         }
 
         var result = await _borrowingService.BorrowBookAsync(bookId, userId);
