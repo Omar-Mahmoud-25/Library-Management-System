@@ -16,7 +16,7 @@ public class BorrowingService : IBorrowingService
     public async Task<bool> BorrowBookAsync(int bookId, int userId)
     {
         // Check if user can borrow the book first
-        if (!await _borrowingRepository.IsUserBorrowingBookAsync(bookId, userId))
+        if (!await _borrowingRepository.CanUserBorrowBookAsync(bookId, userId))
             return false;
 
 
@@ -25,8 +25,7 @@ public class BorrowingService : IBorrowingService
 
     public async Task<bool> CanUserBorrowBookAsync(int bookId, int userId)
     {
-        return await _borrowingRepository.CanUserBorrowBookAsync(bookId, userId)
-            && !await _borrowingRepository.IsUserBorrowingBookAsync(bookId, userId);
+        return await _borrowingRepository.CanUserBorrowBookAsync(bookId, userId);
     }
 
     public async Task<List<Borrowing>> GetAllBorrowingsAsync()
@@ -71,8 +70,7 @@ public class BorrowingService : IBorrowingService
 
     public async Task<bool> ReturnBookAsync(int bookId, int userId)
     {
-        if (!await _borrowingRepository.IsUserBorrowingBookAsync(bookId, userId))
-            return false;
+        // Let the repository handle the validation and return logic
         return await _borrowingRepository.ReturnBookAsync(bookId, userId);
     }
 }

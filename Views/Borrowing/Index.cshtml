@@ -198,9 +198,6 @@
 @if (isAdmin)
 {
     <div class="d-flex gap-2 mb-3">
-        <a asp-action="Overdue" class="btn btn-outline-danger">
-            <i class="bi bi-exclamation-triangle"></i> View Overdue (@ViewBag.OverdueCount)
-        </a>
         <button class="btn btn-outline-info" onclick="refreshStats()">
             <i class="bi bi-arrow-clockwise"></i> Refresh Stats
         </button>

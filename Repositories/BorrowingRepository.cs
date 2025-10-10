@@ -81,6 +81,8 @@ public class BorrowingRepository : IBorrowingRepository
 
     public async Task<bool> CanUserBorrowBookAsync(int bookId, int userId)
     {
+        if (await IsUserBorrowingBookAsync(bookId, userId))
+            return false;
         var activeBorrowings = await _context.Borrowings
             .Where(b => b.UserId == userId && b.ReturnedDate == null)
             .CountAsync();

@@ -247,7 +247,7 @@
                                         {
                                             <form asp-action="Return" method="post" class="d-inline">
                                                 @Html.AntiForgeryToken()
-                                                <input type="hidden" name="borrowingId" value="@borrowing.Id" />
+                                                <input type="hidden" name="bookId" value="@borrowing.Book.Id" />
                                                 <button type="submit" class="btn btn-outline-success btn-sm" 
                                                         onclick="return confirm('Mark this book as returned?')">
                                                     <i class="bi bi-arrow-return-left"></i> Return

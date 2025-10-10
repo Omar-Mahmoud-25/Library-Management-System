@@ -19,8 +19,8 @@ public class BorrowingController : Controller
 
     // Admin view - All borrowings with filtering
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Index(int? userId, int? bookId)
-    {
+    public async Task<IActionResult> Index(int? userId, int? bookId, string? status)
+    {   
         var borrowings = await _borrowingService.GetAllBorrowingsAsync();
 
         // Apply filters
@@ -34,10 +34,27 @@ public class BorrowingController : Controller
             borrowings = borrowings.Where(b => b.BookId == bookId.Value).ToList();
         }
 
+        if (!string.IsNullOrEmpty(status))
+        {
+            switch (status.ToLower())
+            {
+                case "active":
+                    borrowings = borrowings.Where(b => b.ReturnedDate == null).ToList();
+                    break;
+                case "returned":
+                    borrowings = borrowings.Where(b => b.ReturnedDate != null).ToList();
+                    break;
+                case "overdue":
+                    borrowings = borrowings.Where(b => b.IsOverdue).ToList();
+                    break;
+            }
+        }
+
         // Statistics
         ViewBag.BorrowedCount = await _borrowingService.GetBorrowedCountAsync();
         ViewBag.OverdueCount = await _borrowingService.GetOverdueCountAsync();
         ViewBag.ReturnedCount = await _borrowingService.GetReturnedCountAsync();
+        ViewBag.TotalCount = ViewBag.BorrowedCount + ViewBag.ReturnedCount;
         
         // Filter data for dropdowns
         ViewBag.SelectedUserId = userId;
@@ -49,11 +66,26 @@ public class BorrowingController : Controller
 
     // User view - My borrowings
     [Authorize]
-    public async Task<IActionResult> MyBorrowings()
+    public async Task<IActionResult> MyBorrowings(string? status)
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var borrowings = await _borrowingService.GetUserBorrowingsAsync(userId);
 
+        if (!string.IsNullOrEmpty(status))
+        {
+            switch (status.ToLower())
+            {
+                case "active":
+                    borrowings = borrowings.Where(b => b.ReturnedDate == null).ToList();
+                    break;
+                case "returned":
+                    borrowings = borrowings.Where(b => b.ReturnedDate != null).ToList();
+                    break;
+                case "overdue":
+                    borrowings = borrowings.Where(b => b.IsOverdue).ToList();
+                    break;
+            }
+        }   
 
         ViewBag.IsAdmin = User.IsInRole("Admin");
         
@@ -80,8 +112,9 @@ public class BorrowingController : Controller
 
     // Borrow a book
     [Authorize]
+    // [HttpPost]
     // [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Borrow(int bookId)
+    public async Task<IActionResult> Borrow([FromRoute(Name = "id")] int bookId)
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         
@@ -109,7 +142,7 @@ public class BorrowingController : Controller
     // Return a book
     [HttpPost]
     [Authorize]
-    [ValidateAntiForgeryToken]
+    // [ValidateAntiForgeryToken]
     public async Task<IActionResult> Return(int bookId)
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
