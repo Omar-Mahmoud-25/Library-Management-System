@@ -25,7 +25,8 @@ public class BorrowingService : IBorrowingService
 
     public async Task<bool> CanUserBorrowBookAsync(int bookId, int userId)
     {
-        return await _borrowingRepository.CanUserBorrowBookAsync(bookId, userId) && !await _borrowingRepository.IsUserBorrowingBookAsync(bookId, userId);
+        return await _borrowingRepository.CanUserBorrowBookAsync(bookId, userId)
+            && !await _borrowingRepository.IsUserBorrowingBookAsync(bookId, userId);
     }
 
     public async Task<List<Borrowing>> GetAllBorrowingsAsync()

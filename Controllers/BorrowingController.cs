@@ -79,9 +79,8 @@ public class BorrowingController : Controller
     }
 
     // Borrow a book
-    [HttpPost]
     [Authorize]
-    [ValidateAntiForgeryToken]
+    // [ValidateAntiForgeryToken]
     public async Task<IActionResult> Borrow(int bookId)
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
