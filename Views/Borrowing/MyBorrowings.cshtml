@@ -1,0 +1,301 @@
+@using LibraryManagementSystem.Entities
+@model IEnumerable<Borrowing>
+
+@{
+    ViewData["Title"] = "My Borrowings";
+    var selectedStatus = ViewBag.SelectedStatus as string ?? "";
+    var isAdmin = ViewBag.IsAdmin as bool? ?? false;
+    var activeBorrowings = Model.Where(b => !b.IsReturned).ToList();
+    var overdueBorrowings = Model.Where(b => b.IsOverdue).ToList();
+}
+
+<style>
+    .borrowing-container {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .borrowing-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid rgba(0, 255, 136, 0.3);
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+    
+    .stat-card {
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid rgba(0, 255, 136, 0.3);
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #00ff88;
+        display: block;
+    }
+    
+    .stat-label {
+        color: #ccc;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+    
+    .book-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid;
+        transition: transform 0.3s ease;
+    }
+    
+    .book-card:hover {
+        transform: translateX(5px);
+    }
+    
+    .book-card.active {
+        border-left-color: #ffc107;
+    }
+    
+    .book-card.overdue {
+        border-left-color: #dc3545;
+        background: rgba(220, 53, 69, 0.1);
+    }
+    
+    .book-card.returned {
+        border-left-color: #28a745;
+    }
+    
+    .filter-tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        justify-content: center;
+    }
+    
+    .filter-tab {
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        border: 2px solid rgba(0, 255, 136, 0.3);
+        background: transparent;
+        color: #ccc;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+    
+    .filter-tab.active {
+        background: #00ff88;
+        color: #333;
+        border-color: #00ff88;
+    }
+    
+    .filter-tab:hover {
+        color: #fff;
+        border-color: #00ff88;
+    }
+</style>
+
+<div class="container">
+    <div class="borrowing-container">
+        <div class="borrowing-header">
+            <h1 class="text-light">
+                <i class="bi bi-bookmark-heart"></i> My Library
+            </h1>
+            <p class="text-muted mb-0">Track your borrowed books and reading history</p>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle"></i> @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-number">@Model.Count()</span>
+                <div class="stat-label">Total Borrowed</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">@activeBorrowings.Count</span>
+                <div class="stat-label">Currently Reading</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number text-danger">@overdueBorrowings.Count</span>
+                <div class="stat-label">Overdue Books</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">@Model.Count(b => b.IsReturned)</span>
+                <div class="stat-label">Books Completed</div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <a asp-action="MyBorrowings" class="filter-tab @(string.IsNullOrEmpty(selectedStatus) ? "active" : "")">
+                <i class="bi bi-list"></i> All Books
+            </a>
+            <a asp-action="MyBorrowings" asp-route-status="active" class="filter-tab @(selectedStatus == "active" ? "active" : "")">
+                <i class="bi bi-book-half"></i> Currently Reading (@activeBorrowings.Count)
+            </a>
+            <a asp-action="MyBorrowings" asp-route-status="overdue" class="filter-tab @(selectedStatus == "overdue" ? "active" : "")">
+                <i class="bi bi-exclamation-triangle"></i> Overdue (@overdueBorrowings.Count)
+            </a>
+            <a asp-action="MyBorrowings" asp-route-status="returned" class="filter-tab @(selectedStatus == "returned" ? "active" : "")">
+                <i class="bi bi-check-circle"></i> Completed (@Model.Count(b => b.IsReturned))
+            </a>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-book" style="font-size: 4rem; color: #ccc;"></i>
+                <h3 class="text-light mt-3">No books found</h3>
+                <p class="text-muted">You haven't borrowed any books yet. Visit our library to start reading!</p>
+                <a asp-controller="Book" asp-action="Index" class="btn btn-primary">
+                    <i class="bi bi-search"></i> Browse Books
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var borrowing in Model)
+                {
+                    <div class="col-12">
+                        <div class="book-card @(borrowing.IsReturned ? "returned" : (borrowing.IsOverdue ? "overdue" : "active"))">
+                            <div class="row align-items-center">
+                                <div class="col-md-2">
+                                    <img src="@($"/images/books/{borrowing.Book.CoverImageUrl}")" 
+                                         alt="@borrowing.Book.Title" 
+                                         class="img-fluid rounded" 
+                                         style="max-height: 120px; width: 100%; object-fit: cover;" />
+                                </div>
+                                <div class="col-md-6">
+                                    <h5 class="text-light mb-2">@borrowing.Book.Title</h5>
+                                    <p class="text-muted mb-1">by @borrowing.Book.Author</p>
+                                    
+                                    <div class="mt-2">
+                                        <small class="text-muted">
+                                            <i class="bi bi-calendar-plus"></i> Borrowed: @borrowing.BorrowedDate.ToString("MMM dd, yyyy")
+                                        </small>
+                                        <br />
+                                        <small class="text-muted">
+                                            <i class="bi bi-calendar-x"></i> Due: @borrowing.DueDate.ToString("MMM dd, yyyy")
+                                        </small>
+                                        @if (borrowing.IsReturned)
+                                        {
+                                            <br />
+                                            <small class="text-success">
+                                                <i class="bi bi-check-circle"></i> Returned: @borrowing.ReturnedDate?.ToString("MMM dd, yyyy")
+                                            </small>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    @if (borrowing.IsReturned)
+                                    {
+                                        <span class="badge bg-success p-2">
+                                            <i class="bi bi-check-circle"></i><br />
+                                            Completed
+                                        </span>
+                                    }
+                                    else if (borrowing.IsOverdue)
+                                    {
+                                        <span class="badge bg-danger p-2">
+                                            <i class="bi bi-exclamation-triangle"></i><br />
+                                            @borrowing.DaysOverdue day(s) overdue
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark p-2">
+                                            <i class="bi bi-clock"></i><br />
+                                            @((borrowing.DueDate - DateTime.Now).Days) days left
+                                        </span>
+                                    }
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <div class="btn-group-vertical">
+                                        <a asp-action="Details" asp-route-id="@borrowing.Id" 
+                                           class="btn btn-outline-info btn-sm mb-1">
+                                            <i class="bi bi-eye"></i> Details
+                                        </a>
+                                        @if (!borrowing.IsReturned)
+                                        {
+                                            <form asp-action="Return" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="borrowingId" value="@borrowing.Id" />
+                                                <button type="submit" class="btn btn-outline-success btn-sm" 
+                                                        onclick="return confirm('Mark this book as returned?')">
+                                                    <i class="bi bi-arrow-return-left"></i> Return
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <a asp-controller="Book" asp-action="Details" asp-route-id="@borrowing.BookId" 
+                                               class="btn btn-outline-primary btn-sm">
+                                                <i class="bi bi-arrow-repeat"></i> Borrow Again
+                                            </a>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (overdueBorrowings.Any())
+        {
+            <div class="mt-4 p-3" style="background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3); border-radius: 10px;">
+                <h6 class="text-danger mb-2">
+                    <i class="bi bi-exclamation-triangle"></i> Overdue Notice
+                </h6>
+                <p class="text-light mb-0">
+                    You have @overdueBorrowings.Count overdue book(s). Please return them as soon as possible to avoid late fees.
+                </p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Auto-refresh user borrowings every 60 seconds
+        function refreshUserStats() {
+            fetch('/Borrowing/GetUserActiveBorrowings')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('User borrowing stats updated:', data);
+                })
+                .catch(error => console.error('Error refreshing user stats:', error));
+        }
+
+        setInterval(refreshUserStats, 60000);
+    </script>
+}

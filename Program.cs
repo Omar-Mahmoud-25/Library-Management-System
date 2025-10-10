@@ -22,6 +22,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IBorrowingService, BorrowingService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IBorrowingRepository, BorrowingRepository>();
+builder.Services.AddScoped<IBorrowingService, BorrowingService>();
 
 builder.Services.AddControllersWithViews();
 

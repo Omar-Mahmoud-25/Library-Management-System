@@ -132,6 +132,7 @@ public class BookController : Controller
     public IActionResult Details(int id)
     {
         var book = _bookService.GetById(id);
+        ViewBag.canBeBorrowed = book?.CopiesAvailable > 0;
 
         if (book == null)
             return NotFound();

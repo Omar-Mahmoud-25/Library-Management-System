@@ -65,7 +65,7 @@ public class BookService : IBookService
         }
         else
         {
-            book.CoverImageUrl = "default-book-cover.jpg"; // Default image
+            book.CoverImageUrl = "default-book-cover.png"; // Default image
         }
 
         // Add categories
@@ -117,7 +117,7 @@ public class BookService : IBookService
             await _bookRepository.UpdateBookAsync(book);
 
             // Clean up old cover if update was successful and we have a new cover
-            if (hasNewCover && !string.IsNullOrEmpty(oldCover) && oldCover != "default-book-cover.jpg")
+            if (hasNewCover && !string.IsNullOrEmpty(oldCover) && oldCover != "default-book-cover.png")
             {
                 var coverPath = Path.Combine(_imagesPath, oldCover);
                 if (File.Exists(coverPath))
@@ -152,7 +152,7 @@ public class BookService : IBookService
             await _bookRepository.DeleteBookAsync(id);
 
             // Clean up cover image after successful deletion (but not default image)
-            if (!string.IsNullOrEmpty(book.CoverImageUrl) && book.CoverImageUrl != "default-book-cover.jpg")
+            if (!string.IsNullOrEmpty(book.CoverImageUrl) && book.CoverImageUrl != "default-book-cover.png")
             {
                 var coverPath = Path.Combine(_imagesPath, book.CoverImageUrl);
                 if (File.Exists(coverPath))
@@ -207,7 +207,7 @@ public class BookService : IBookService
     public string GetCoverImageUrl(string? fileName)
     {
         if (string.IsNullOrEmpty(fileName))
-            return "/images/books/default-book-cover.jpg";
+            return "/images/books/default-book-cover.png";
             
         return $"/images/books/{fileName}";
     }

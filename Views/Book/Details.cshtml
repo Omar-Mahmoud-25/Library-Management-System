@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = Model.Title;
+    var canBeBorrowed = ViewBag.canBeBorrowed as bool? ?? false;
 }
 
 <style>
@@ -65,7 +66,15 @@
             <div class="col-md-8 px-5 py-4 d-flex flex-column justify-content-between">
                 <div>
                     <h1 class="fw-bolder">@Model.Title</h1>
-                    <span class="badge fs-5 mb-4">@Model.BookCategories</span>
+                    <div>
+                        @if (Model.BookCategories?.Any() == true)
+                        {
+                            @foreach (var bc in Model.BookCategories)
+                            {
+                                <span class="badge bg-info category-badge">@bc.Category?.Name</span>
+                            }
+                        }
+                    </div>
                     <h4 class="mb-3 text-secondary">By @Model.Author</h4>
                     <p class="fs-5">@Model.Description</p>
                 </div>
@@ -81,7 +90,7 @@
             </div>
 
             <div class="col-md-4">
-                <img src="@($"/images/{Model.CoverImageUrl}")" alt="@Model.Title" class="w-100 h-100 object-fit-cover" />
+                <img src="@($"/images/books/{Model.CoverImageUrl}")" alt="@Model.Title" class="w-100 h-100 object-fit-cover" />
             </div>
         </div>
     </div>
@@ -91,7 +100,16 @@
     <a asp-action="Index" class="btn btn-outline-secondary">
         <i class="bi bi-arrow-left"></i> Back to List
     </a>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-edit ms-2">
-        <i class="bi bi-pencil-fill"></i> Edit
-    </a>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-edit ms-2">
+            <i class="bi bi-pencil-fill"></i> Edit
+        </a>
+    }
+    else if (User.Identity?.IsAuthenticated == true && canBeBorrowed)
+    {
+        <a class="btn btn-success ms-2" asp-controller="Borrowing" asp-action="Borrow" asp-route-id="@Model.Id">
+            <i class="bi bi-bookmark-fill"></i> Borrow
+        </a>
+    }
 </div>
