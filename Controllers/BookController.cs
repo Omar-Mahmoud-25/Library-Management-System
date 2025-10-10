@@ -101,30 +101,10 @@ public class BookController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpGet]
-    [Authorize(Roles = "Admin")]
-    public IActionResult Delete(int id)
-    {
-        var book = _bookService.GetById(id);
-        if (book == null)
-            return NotFound();
-
-        var viewModel = new BookViewModel
-        {
-            Id = book.Id,
-            Title = book.Title,
-            Author = book.Author,
-            Category = book.BookCategories.FirstOrDefault()?.Category?.Name ?? "",
-            CoverImageUrl = book.CoverImageUrl
-        };
-
-        return View(viewModel);
-    }
-
-    [HttpPost, ActionName("Delete")]
+    [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> DeleteConfirmed(int id)
+    public async Task<IActionResult> Delete([FromRoute] int id)
     {
         var isDeleted = await _bookService.DeleteAsync(id);
         if (!isDeleted)
