@@ -175,15 +175,3 @@
         </div>
     }
 </div>
-
-@section Scripts {
-    <script>
-        function refreshStats() {
-            fetch('/Borrowing/GetStatistics')
-                .then(r => r.json())
-                .then(d => location.reload())
-                .catch(e => console.error(e));
-        }
-        setInterval(refreshStats, 30000);
-    </script>
-}

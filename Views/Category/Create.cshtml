@@ -44,27 +44,3 @@
         </div>
     </div>
 </div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    
-    <script>
-        // Real-time validation for category name
-        $(document).ready(function() {
-            $('#Name').on('blur', function() {
-                var name = $(this).val();
-                if (name) {
-                    $.post('@Url.Action("CheckCategoryName")', { name: name }, function(data) {
-                        if (!data) {
-                            $('#Name').addClass('is-invalid');
-                            $('#Name').next('.text-danger').text('A category with this name already exists.');
-                        } else {
-                            $('#Name').removeClass('is-invalid').addClass('is-valid');
-                            $('#Name').next('.text-danger').text('');
-                        }
-                    });
-                }
-            });
-        });
-    </script>
-}
