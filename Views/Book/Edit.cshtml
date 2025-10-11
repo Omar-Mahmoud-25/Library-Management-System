@@ -92,7 +92,7 @@
                     <select asp-for="SelectedCategoryIds" asp-items="Model.Categories" class="form-select" multiple>
                         <option disabled>Select one or more categories</option>
                     </select>
-                    <small class="form-text text-muted">
+                    <small class="form-text">
                         Hold Ctrl (Cmd on Mac) to select multiple categories
                     </small>
                     <span asp-validation-for="SelectedCategoryIds" class="text-danger"></span>
@@ -119,7 +119,7 @@
                 <div class="form-group mb-3">
                     <label asp-for="CoverImageUrl" class="form-label"></label>
                     <input asp-for="CoverImageUrl" class="form-control" type="file" accept="image/*" />
-                    <small class="form-text text-muted">
+                    <small class="form-text">
                         Upload a new cover image if you want to replace the current one.
                         Allowed: .jpg, .jpeg, .png, .gif, .webp (Max 5 MB)
                     </small>
