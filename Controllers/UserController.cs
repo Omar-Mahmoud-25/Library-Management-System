@@ -53,7 +53,7 @@ public class UserController : Controller
     public IActionResult ToggleAdmin(int id)
     {
         var success = _userService.ToggleAdmin(id);
-        return success ? Ok() : BadRequest();
+        return success ? RedirectToAction(nameof(Index)) : BadRequest();
     }
 
     [Authorize(Roles = "Admin")]
