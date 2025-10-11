@@ -94,14 +94,6 @@ public class BorrowingRepository : IBorrowingRepository
         // Assuming a user can borrow up to 5 books at a time
         return activeBorrowings < 5;
     }
-
-    // public async Task<bool> IsBookOverdueAsync(int borrowingId)
-    // {
-    //     var borrowing = await _context.Borrowings.FindAsync(borrowingId);
-    //     if (borrowing == null || borrowing.ReturnedDate != null)
-    //         return false;
-    //     return DateTime.Now > borrowing.DueDate;
-    // }
     public async Task<Borrowing?> GetBorrowingByIdAsync(int borrowingId)
     {
         return await _context.Borrowings

@@ -63,11 +63,6 @@ public class BorrowingService : IBorrowingService
         return await _borrowingRepository.GetUserBorrowingsAsync(userId);
     }
 
-    // public async Task<bool> IsBookOverdueAsync(int borrowingId)
-    // {
-    //     return await _borrowingRepository.IsBookOverdueAsync(borrowingId);
-    // }
-
     public async Task<bool> ReturnBookAsync(int bookId, int userId)
     {
         // Let the repository handle the validation and return logic

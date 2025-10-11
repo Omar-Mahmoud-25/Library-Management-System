@@ -141,12 +141,6 @@ public class BorrowingController : Controller
     public async Task<IActionResult> Return(int bookId)
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        
-        // var borrowing = await _borrowingService.GetBorrowingByIdAsync(bookId);
-        // if (borrowing == null || borrowing.UserId != userId)
-        // {
-        //     return NotFound();
-        // }
 
         var result = await _borrowingService.ReturnBookAsync(bookId, userId);
         
@@ -196,59 +190,6 @@ public class BorrowingController : Controller
         return Json(new { canBorrow });
     }
 
-    // Get user's active borrowing count (AJAX endpoint)
-    // [HttpGet]
-    // [Authorize]
-    // public async Task<IActionResult> GetUserActiveBorrowings()
-    // {
-    //     var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-    //     var borrowings = await _borrowingService.GetUserBorrowingsAsync(userId);
-    //     var activeBorrowings = borrowings.Where(b => !b.IsReturned).ToList();
-        
-    //     return Json(new { 
-    //         count = activeBorrowings.Count,
-    //         overdue = activeBorrowings.Count(b => b.IsOverdue),
-    //         borrowings = activeBorrowings.Select(b => new {
-    //             id = b.Id,
-    //             bookTitle = b.Book.Title,
-    //             dueDate = b.DueDate.ToString("yyyy-MM-dd"),
-    //             isOverdue = b.IsOverdue,
-    //             daysOverdue = b.DaysOverdue
-    //         })
-    //     });
-    // }
-
-    // Admin: Force return (for overdue books)
-    // [HttpPost]
-    // [Authorize(Roles = "Admin")]
-    // [ValidateAntiForgeryToken]
-    // public async Task<IActionResult> ForceReturn(int borrowingId)
-    // {
-    //     var result = await _borrowingService.ReturnBookAsync(borrowingId);
-        
-    //     if (result)
-    //     {
-    //         TempData["SuccessMessage"] = "Book forcefully returned successfully!";
-    //     }
-    //     else
-    //     {
-    //         TempData["ErrorMessage"] = "Failed to return the book.";
-    //     }
-
-    //     return RedirectToAction("Index");
-    // }
-
-    // Get overdue borrowings (Admin)
-    // [Authorize(Roles = "Admin")]
-    // public async Task<IActionResult> Overdue()
-    // {
-    //     var borrowings = await _borrowingService.GetAllBorrowingsAsync();
-    //     var overdueBorrowings = borrowings.Where(b => b.IsOverdue).ToList();
-        
-    //     return View(overdueBorrowings);
-    // }
-
-    // Get statistics (AJAX endpoint for dashboard)
     [HttpGet]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetStatistics()
