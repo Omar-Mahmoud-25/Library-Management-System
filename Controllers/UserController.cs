@@ -32,7 +32,7 @@ public class UserController : Controller
 
             if (!isDeleted)
             {
-                TempData["ErrorMessage"] = "User not found or cannot be deleted.";
+                TempData["ErrorMessage"] = "User cannot be deleted because they have related records.";
                 return RedirectToAction(nameof(Index));
             }
 
