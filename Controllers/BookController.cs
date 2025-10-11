@@ -1,10 +1,11 @@
-using System.Security.Claims;
 using LibraryManagementSystem.Models;
 using LibraryManagementSystem.Models.ViewModels;
 using LibraryManagementSystem.Services;
 using LibraryManagementSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace LibraryManagementSystem.Controllers;
 
@@ -106,13 +107,26 @@ public class BookController : Controller
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        var isDeleted = await _bookService.DeleteAsync(id);
-        if (!isDeleted)
-            return NotFound();
+        try
+        {
+            var isDeleted = await _bookService.DeleteAsync(id);
+            if (!isDeleted)
+            {
+                TempData["ErrorMessage"] = "Book not found or cannot be deleted.";
+                return RedirectToAction(nameof(Index));
+            }
 
-        TempData["SuccessMessage"] = "Book deleted successfully!";
+            TempData["SuccessMessage"] = "Book deleted successfully!";
+        }
+        catch (DbUpdateException ex)
+        {
+            
+            TempData["ErrorMessage"] = "Cannot delete this book because it is currently borrowed.";
+        }
+
         return RedirectToAction(nameof(Index));
     }
+
 
     [HttpGet]
     [Authorize]

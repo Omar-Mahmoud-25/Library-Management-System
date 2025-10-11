@@ -26,13 +26,27 @@ public class UserController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult DeleteConfirmed(int id)
     {
-        var isDeleted = _userService.DeleteUser(id);
+        try
+        {
+            var isDeleted = _userService.DeleteUser(id);
 
-        if (!isDeleted)
-            return NotFound();
+            if (!isDeleted)
+            {
+                TempData["ErrorMessage"] = "User not found or cannot be deleted.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            TempData["SuccessMessage"] = "User deleted successfully!";
+        }
+        catch (Exception ex)
+        {
+            
+            TempData["ErrorMessage"] = "Cannot delete this user due to existing related records.";
+        }
 
         return RedirectToAction(nameof(Index));
     }
+
 
 
     [HttpPost]
